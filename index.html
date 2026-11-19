@@ -1471,52 +1471,38 @@
             }
 
             async function probeFirstExisting(candidates) {
-                const results = await Promise.all(candidates.map(src => probeImage(src)));
-                return results.find(Boolean) || null;
+                for (const src of candidates) {
+                    const found = await probeImage(src);
+                    if (found) return found;
+                }
+                return null;
             }
 
             async function discoverCaseMedia(item) {
                 const folder = item.folder || `cases/case-${item.code}`;
                 const start = item.slideStart || 1;
                 const end = item.slideEnd || 25;
-                const indices = Array.from({ length: end - start + 1 }, (_, i) => start + i);
-
-                // Проверяем оба варианта именования: 1.jpg..25.jpg И старый формат case-XX.jpg / case-XX-1.jpg
-                const slotCandidates = indices.map(idx => {
-                    if (idx === 1) {
-                        return [
-                            `${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`,
-                            `${folder}/case-${item.code}.jpg`, `${folder}/case-${item.code}.png`, `${folder}/case-${item.code}.webp`
-                        ];
-                    }
-                    return [
-                        `${folder}/${idx}.jpg`, `${folder}/${idx}.png`, `${folder}/${idx}.webp`,
-                        `${folder}/case-${item.code}-${idx - 1}.jpg`, `${folder}/case-${item.code}-${idx - 1}.png`, `${folder}/case-${item.code}-${idx - 1}.webp`
-                    ];
-                });
-
-                const imageResults = await Promise.all(
-                    slotCandidates.map(candidates => probeFirstExisting(candidates))
-                );
-
                 const slides = [];
-                imageResults.forEach(src => {
-                    if (src && !slides.some(s => s.src === src)) {
-                        slides.push({ type: 'image', src });
-                    }
-                });
 
-                // Проверяем наличие видеофайлов (если у кейса включена поддержка видео)
+                // Проверяем слайды последовательно и останавливаемся при первом отсутствующем номере,
+                // чтобы не создавать лишнюю нагрузку на CDN GitHub Pages
+                for (let idx = start; idx <= end; idx++) {
+                    const candidates = idx === 1
+                        ? [`${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`, `${folder}/case-${item.code}.jpg`]
+                        : [`${folder}/${idx}.jpg`, `${folder}/${idx}.png`, `${folder}/${idx}.webp`];
+
+                    const foundSrc = await probeFirstExisting(candidates);
+                    if (!foundSrc) break;
+
+                    if (!slides.some(s => s.src === foundSrc)) {
+                        slides.push({ type: 'image', src: foundSrc });
+                    }
+                }
+
+                // Проверяем видеофайл только для кейсов с видеоподдержкой
                 if (item.hasVideoSupport) {
-                    const videoCandidates = [
-                        `${folder}/1.mp4`,
-                        `${folder}/2.mp4`,
-                        `${folder}/video.mp4`
-                    ];
-                    const videoResults = await Promise.all(videoCandidates.map(src => probeVideo(src)));
-                    videoResults.forEach(src => {
-                        if (src) slides.push({ type: 'video', src });
-                    });
+                    const videoSrc = await probeVideo(`${folder}/1.mp4`) || await probeVideo(`${folder}/video.mp4`);
+                    if (videoSrc) slides.push({ type: 'video', src: videoSrc });
                 }
 
                 resolvedMediaMap.set(item.id, { slides });
