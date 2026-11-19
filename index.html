@@ -614,8 +614,8 @@
         <!-- =====================================================================
              4. ГАЛЕРЕЯ ИЗБРАННЫХ КЕЙСОВ (13 КЕЙСОВ С ФИЛЬТРАЦИЕЙ)
         ====================================================================== -->
-        <section id="cases" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 reveal">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+        <section id="cases" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 reveal">
                 <div class="max-w-2xl">
                     <span class="font-mono text-xs uppercase tracking-widest text-coral-400">02 // ПОРТФОЛИО ПРОЕКТОВ</span>
                     <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
@@ -1111,7 +1111,7 @@
             bindCloudLinks();
 
             /* -----------------------------------------------------------------
-               1. БАЗА ДАННЫХ ВСЕХ 12 РЕАЛЬНЫХ КЕЙСОВ ИЗ PDF-ПОРТФОЛИО
+               1. БАЗА ДАННЫХ ВСЕХ 13 КЕЙСОВ ИЗ PDF-ПОРТФОЛИО
             ------------------------------------------------------------------ */
             const casesData = [
                 {
@@ -1447,9 +1447,9 @@
 
             /* -----------------------------------------------------------------
                2. УМНЫЙ ЗАГРУЗЧИК РЕАЛЬНЫХ ФАЙЛОВ ИЗ ПОДПАПОК cases/case-XX/
-                  (Автоматически проверяет 1..15 в форматах .jpg, .png, .webp и .mp4)
+                  (Автоматически проверяет 1..25 в форматах .jpg, .png, .webp и .mp4)
             ------------------------------------------------------------------ */
-            const resolvedMediaMap = new Map(); // id -> { slides: Array<{type: 'image'|'video', src: string}> }
+            const resolvedMediaMap = new Map();
 
             function probeImage(src) {
                 return new Promise((resolve) => {
@@ -1484,8 +1484,6 @@
                 const end = item.slideEnd || 25;
                 const slides = [];
 
-                // Проверяем слайды последовательно и останавливаемся при первом отсутствующем номере,
-                // чтобы не создавать лишнюю нагрузку на CDN GitHub Pages
                 for (let idx = start; idx <= end; idx++) {
                     const candidates = idx === 1
                         ? [`${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`, `${folder}/case-${item.code}.jpg`]
@@ -1499,7 +1497,6 @@
                     }
                 }
 
-                // Проверяем видеофайл только для кейсов с видеоподдержкой
                 if (item.hasVideoSupport) {
                     const videoSrc = await probeVideo(`${folder}/1.mp4`) || await probeVideo(`${folder}/video.mp4`);
                     if (videoSrc) slides.push({ type: 'video', src: videoSrc });
@@ -1518,7 +1515,6 @@
 
                 return `
                 <div class="w-full h-full relative flex flex-col justify-between p-5 sm:p-6 bg-gradient-to-br from-graphite-900 via-graphite-950 to-[#060911] select-none overflow-hidden">
-                    <!-- Декоративная модульная сетка и ромб -->
                     <div class="pointer-events-none absolute -right-8 -bottom-8 w-36 h-36 rounded-2xl border border-slate-700/40 rhombus-badge" style="border-color: ${accentHex}33;"></div>
                     <div class="pointer-events-none absolute right-10 top-6 w-14 h-14 rounded-xl rhombus-badge" style="background: ${accentHex}14; border: 1px solid ${accentHex}33;"></div>
 
@@ -1655,6 +1651,7 @@
                 });
 
                 bindCardTiltEffect();
+                applyRussianTypography(casesGrid);
             }
 
             /* -----------------------------------------------------------------
@@ -1676,11 +1673,9 @@
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
 
-                        // Нормализуем координаты от -1 до +1 относительно центра карточки
                         const normX = (x / rect.width - 0.5) * 2;
                         const normY = (y / rect.height - 0.5) * 2;
 
-                        // Горизонтальное покачивание влево-вправо (до ±5.5°) и деликатный вертикальный наклон (до ±3°)
                         const rotateY = (normX * 5.5).toFixed(2);
                         const rotateX = (-normY * 3).toFixed(2);
 
@@ -1696,7 +1691,6 @@
                 });
             }
 
-            // Переключение фильтров
             filterButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     filterButtons.forEach(b => {
@@ -1710,7 +1704,6 @@
                 });
             });
 
-            // Первичный рендер и фоновое сканирование папки cases/
             renderCases('all');
             Promise.all(casesData.map(item => discoverCaseMedia(item))).then(() => {
                 renderCases(currentFilter);
@@ -1742,7 +1735,6 @@
                 const media = resolvedMediaMap.get(item.id) || { slides: [] };
                 currentSlideList = media.slides;
 
-                // Если в папке cases/case-XX/ ещё нет файлов для этого кейса
                 if (currentSlideList.length === 0) {
                     modalVisual.innerHTML = getArchitecturalPlaceholderHTML(item, true);
                     slidePrevBtn.classList.add('hidden');
@@ -1753,7 +1745,6 @@
                     return;
                 }
 
-                // Есть реальные слайды или видео!
                 if (currentSlideIndex >= currentSlideList.length) currentSlideIndex = 0;
                 const activeSlide = currentSlideList[currentSlideIndex];
 
@@ -1842,7 +1833,6 @@
                     </li>
                 `).join('');
 
-                // Показываем кнопку перехода к видеопрезентации в облаке для Кейсов 09 (ИИ-видео) и 10 (Анимация данных)
                 const videoCloudBanner = document.getElementById('modal-video-cloud-banner');
                 if (videoCloudBanner) {
                     if (item.id === 9 || item.id === 10) {
@@ -1853,6 +1843,7 @@
                 }
 
                 updateSlideStage(item);
+                applyRussianTypography(modal);
             }
 
             function openCaseModalById(id) {
@@ -2015,7 +2006,6 @@
                 }
             });
 
-            // Клавиатурная навигация (Escape, Стрелки)
             document.addEventListener('keydown', (e) => {
                 if (lightbox.classList.contains('active')) {
                     if (e.key === 'Escape') closeFullscreenLightbox();
@@ -2036,7 +2026,7 @@
             });
 
             /* -----------------------------------------------------------------
-               7. КОПИРОВАНИЕ EMAIL, TOAST И ФОРМА ОБРАТНОЙ СВЯЗИ
+               7. КОПИРОВАНИЕ EMAIL, TOAST, ФОРМА ОБРАТНОЙ СВЯЗИ И МОБИЛЬНОЕ МЕНЮ
             ------------------------------------------------------------------ */
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
@@ -2085,62 +2075,64 @@
             let lastFormattedPayload = '';
 
             function buildRequestMessage() {
-                const name = document.getElementById('client-name').value.trim() || 'Клиент';
-                const contact = document.getElementById('client-contact').value.trim() || 'не указан';
+                const name = document.getElementById('client-name').value.trim() || 'Не указано';
+                const contact = document.getElementById('client-contact').value.trim() || 'Не указан';
                 const type = document.getElementById('project-type').value;
-                const task = document.getElementById('project-task').value.trim() || 'Хочу обсудить проект';
-                return `Здравствуйте, Павел! Пишу с сайта-портфолио.\n• Имя: ${name}\n• Контакт: ${contact}\n• Направление: ${type}\n• Задача: ${task}`;
+                const task = document.getElementById('project-task').value.trim() || 'Без дополнительного описания';
+
+                return [
+                    'Здравствуйте, Павел! Заявка с сайта-портфолио:',
+                    `• Имя: ${name}`,
+                    `• Контакт: ${contact}`,
+                    `• Направление: ${type}`,
+                    `• Задача: ${task}`
+                ].join('\n');
             }
 
             contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 lastFormattedPayload = buildRequestMessage();
-                const encoded = encodeURIComponent(lastFormattedPayload);
-                directTgLink.href = `https://t.me/your_telegram?text=${encoded}`;
+                copyTextFallback(lastFormattedPayload);
+
+                const baseTgUrl = 'https://t.me/your_telegram';
+                directTgLink.href = `${baseTgUrl}?text=${encodeURIComponent(lastFormattedPayload)}`;
 
                 formSuccessBox.classList.remove('hidden');
-                copyTextFallback(lastFormattedPayload);
-                showToast('Заявка сформирована и скопирована в буфер обмена');
+                showToast('Текст заявки сформирован и скопирован в буфер');
             });
 
             prepareTgBtn.addEventListener('click', () => {
                 lastFormattedPayload = buildRequestMessage();
-                copyTextFallback(lastFormattedPayload);
-                showToast('Текст заявки скопирован — вставьте его в Telegram');
+                if (copyTextFallback(lastFormattedPayload)) {
+                    showToast('Текст заявки скопирован — можно вставлять в Telegram');
+                }
             });
 
             copyPayloadBtn.addEventListener('click', () => {
                 if (lastFormattedPayload && copyTextFallback(lastFormattedPayload)) {
-                    showToast('Текст заявки скопирован');
+                    showToast('Заявка скопирована повторно');
                 }
             });
 
-            /* -----------------------------------------------------------------
-               6. МОБИЛЬНОЕ МЕНЮ, ИНДИКАТОР ПРОКРУТКИ И INTERSECTION OBSERVER
-            ------------------------------------------------------------------ */
+            // Мобильное меню и прогресс-бар прокрутки
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
-
             mobileMenuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-
             document.querySelectorAll('.mobile-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                });
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
             });
 
-            // Индикатор прокрутки в шапке
-            const scrollBar = document.getElementById('scroll-progress-bar');
+            const scrollProgressBar = document.getElementById('scroll-progress-bar');
             window.addEventListener('scroll', () => {
                 const scrollTop = window.scrollY || document.documentElement.scrollTop;
                 const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
-                scrollBar.style.width = `${pct}%`;
+                const progress = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+                scrollProgressBar.style.width = `${progress}%`;
             }, { passive: true });
 
-            // Плавное появление секций (IntersectionObserver)
+            // Плавное появление секций (IntersectionObserver + защита для мобильных браузеров)
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const revealElements = document.querySelectorAll('.reveal');
 
@@ -2152,15 +2144,66 @@
                             observer.unobserve(entry.target);
                         }
                     });
-                }, { threshold: 0.1 });
+                }, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
 
                 revealElements.forEach(el => observer.observe(el));
+
+                setTimeout(() => {
+                    revealElements.forEach(el => el.classList.add('is-visible'));
+                }, 1400);
             } else {
                 revealElements.forEach(el => el.classList.add('is-visible'));
             }
 
             /* -----------------------------------------------------------------
-               7. ФОНОВАЯ CANVAS-МИКРОАНИМАЦИЯ В СТИЛЕ ОБЛОЖКИ PDF
+               8. ТИПОГРАФ: УСТРАНЕНИЕ ВИСЯЧИХ ПРЕДЛОГОВ, СОЮЗОВ И ЧАСТИЦ
+            ------------------------------------------------------------------ */
+            function applyRussianTypography(rootNode = document.body) {
+                if (!rootNode) return;
+                const nbsp = '\u00A0';
+                const prepositionsRegex = /(^|[\s\u00A0«(„"'])([А-Яа-яЁё]{1,3})\s+(?=[А-Яа-яЁёA-Za-z0-9«„"'(])/g;
+                const particlesRegex = /\s+(бы|ли|же|—|–)(?=[\s.,!?;:»)"']|$)/gi;
+
+                const walker = document.createTreeWalker(
+                    rootNode,
+                    NodeFilter.SHOW_TEXT,
+                    {
+                        acceptNode(node) {
+                            const parent = node.parentElement;
+                            if (!parent) return NodeFilter.FILTER_REJECT;
+                            const tag = parent.tagName;
+                            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'CODE' || tag === 'PRE' || tag === 'TEXTAREA' || tag === 'INPUT') {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            if (!node.nodeValue || !node.nodeValue.trim()) {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            return NodeFilter.FILTER_ACCEPT;
+                        }
+                    }
+                );
+
+                const textNodes = [];
+                let currentNode;
+                while ((currentNode = walker.nextNode())) {
+                    textNodes.push(currentNode);
+                }
+
+                textNodes.forEach(node => {
+                    let text = node.nodeValue;
+                    text = text.replace(prepositionsRegex, `$1$2${nbsp}`);
+                    text = text.replace(prepositionsRegex, `$1$2${nbsp}`);
+                    text = text.replace(particlesRegex, `${nbsp}$1`);
+                    if (text !== node.nodeValue) {
+                        node.nodeValue = text;
+                    }
+                });
+            }
+
+            applyRussianTypography(document.body);
+
+            /* -----------------------------------------------------------------
+               9. ФОНОВАЯ CANVAS-МИКРОАНИМАЦИЯ В СТИЛЕ ОБЛОЖКИ PDF
                   (Нейросетевые узлы + оранжевая траектория роста данных)
             ------------------------------------------------------------------ */
             const canvas = document.getElementById('bg-network-canvas');
@@ -2202,7 +2245,6 @@
             function drawFrame(time = 0) {
                 ctx.clearRect(0, 0, width, height);
 
-                // Оранжевая траектория роста данных в правой части экрана (отсылка к обложке PDF)
                 ctx.save();
                 ctx.beginPath();
                 const startX = width * 0.55;
@@ -2220,7 +2262,6 @@
                 ctx.stroke();
                 ctx.restore();
 
-                // Узлы и связи нейросети
                 for (let i = 0; i < nodes.length; i++) {
                     const n = nodes[i];
                     if (!prefersReducedMotion) {
@@ -2230,7 +2271,6 @@
                         if (n.y < 0 || n.y > height) n.vy *= -1;
                     }
 
-                    // Связь с курсором
                     const dxm = n.x - mouse.x;
                     const dym = n.y - mouse.y;
                     const distMouse = Math.hypot(dxm, dym);
@@ -2243,7 +2283,6 @@
                         ctx.stroke();
                     }
 
-                    // Связи между ближайшими узлами
                     for (let j = i + 1; j < nodes.length; j++) {
                         const m = nodes[j];
                         const dist = Math.hypot(n.x - m.x, n.y - m.y);
@@ -2257,7 +2296,6 @@
                         }
                     }
 
-                    // Отрисовка точки
                     ctx.beginPath();
                     ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
                     ctx.fillStyle = n.isAccent ? 'rgba(249, 115, 22, 0.55)' : 'rgba(148, 163, 184, 0.35)';
