@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Павел Перов — Мультимедиа-дизайнер • AI-дизайнер | Портфолио 2026</title>
+    <meta name="description" content="Визуальные коммуникации: от данных к истории. Инфографика, полиграфия, презентации, моушн-дизайн и ИИ-генерация. Портфолио 2026.">
+
+    <!-- Google Fonts: Manrope для выразительной типографики и JetBrains Mono для цифр и метаданных -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        graphite: {
+                            950: '#070B14',
+                            900: '#0B1120',
+                            850: '#0F172A',
+                            800: '#162033',
+                            700: '#1E293B',
+                        },
+                        coral: {
+                            400: '#FB923C',
+                            500: '#F97316',
+                            600: '#EA580C',
+                            glow: '#FF5A1F',
+                        },
+                        steel: {
+                            400: '#38BDF8',
+                            500: '#0EA5E9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Базовые настройки и кастомный скроллбар */
+        body {
+            background-color: #0B1120;
+            color: #F1F5F9;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070B14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F97316;
+        }
+
+        /* Стеклянные поверхности (Glassmorphism) и тонкие сетки */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.68);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+
+        .glass-card-hover {
+            position: relative;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        .glass-card-hover::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            background: radial-gradient(
+                420px circle at var(--mx, 50%) var(--my, 50%),
+                rgba(249, 115, 22, 0.11),
+                rgba(56, 189, 248, 0.05) 45%,
+                transparent 75%
+            );
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(249, 115, 22, 0.45);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 24px -6px rgba(249, 115, 22, 0.18);
+        }
+        .glass-card-hover:hover::after {
+            opacity: 1;
+        }
+
+        /* Фоновая инженерная сетка */
+        .bg-data-grid {
+            background-size: 48px 48px;
+            background-image: 
+                linear-gradient(to right, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.045) 1px, transparent 1px);
+        }
+
+        /* Фирменный ромб-модуль из Кейса 03 */
+        .rhombus-badge {
+            transform: rotate(45deg);
+        }
+        .rhombus-badge > * {
+            transform: rotate(-45deg);
+        }
+
+        /* Плавное появление при скролле */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+            .glass-card-hover:hover {
+                transform: none !important;
+            }
+            .glass-card-hover::after {
+                display: none;
+            }
+        }
+
+        /* Анимация модального окна */
+        .modal-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease;
+        }
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-panel {
+            transform: scale(0.96) translateY(12px);
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .modal-backdrop.active .modal-panel {
+            transform: scale(1) translateY(0);
+        }
+
+        /* Полноэкранный лайтбокс для детального изучения слайдов */
+        .lightbox-backdrop {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Скрытие полосы прокрутки в ленте миниатюр */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-coral-500 selection:text-white bg-data-grid relative">
+
+    <!-- Живой фоновый Canvas в стилистике обложки портфолио (нейросеть + график роста) -->
+    <canvas id="bg-network-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80" aria-hidden="true"></canvas>
+
+    <!-- Всплывающее уведомление (Toast) -->
+    <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="glass-card border-coral-500/50 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium text-slate-100">
+            <span class="w-2.5 h-2.5 rounded-full bg-coral-500 animate-pulse"></span>
+            <span id="toast-message">Скопировано в буфер обмена</span>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         1. ФИКСИРОВАННАЯ ШАПКА + ИНДИКАТОР ПРОГРЕССА ПРОКРУТКИ
+    ====================================================================== -->
+    <header class="fixed top-0 inset-x-0 z-40 bg-graphite-950/80 backdrop-blur-xl border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+            <!-- Монограмма и имя -->
+            <a href="#top" class="flex items-center gap-3 group focus:outline-none">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center text-white font-mono font-bold text-sm shadow-lg shadow-coral-500/20 group-hover:scale-105 transition-transform">
+                    ПП
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-sm sm:text-base tracking-tight text-white leading-none">Павел Перов</span>
+                    <span class="font-mono text-[10px] sm:text-xs text-slate-400 mt-1">PaPer • Portfolio 2026</span>
+                </div>
+            </a>
+
+            <!-- Навигация (Desktop) -->
+            <nav class="hidden md:flex items-center gap-1 lg:gap-2 bg-graphite-900/70 p-1.5 rounded-2xl border border-slate-800/80">
+                <a href="#about" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Обо мне</a>
+                <a href="#cases" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Кейсы (12)</a>
+                <a href="#services" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Подход и услуги</a>
+                <a href="#contacts" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Контакты</a>
+            </nav>
+
+            <!-- Кнопки справа -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-coral-500 hover:bg-coral-600 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-coral-500/25 transition-all active:scale-95">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Написать в Telegram</span>
+                    <span class="sm:hidden">Telegram</span>
+                </a>
+                <!-- Кнопка мобильного меню -->
+                <button id="mobile-menu-btn" type="button" aria-label="Открыть меню" class="md:hidden p-2.5 rounded-xl bg-graphite-800 border border-slate-700/70 text-slate-200 hover:text-white">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Мобильное выпадающее меню -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-graphite-950/95 px-4 py-4 space-y-2">
+            <a href="#about" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Обо мне и стек</a>
+            <a href="#cases" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Избранные кейсы (12)</a>
+            <a href="#services" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Подход и услуги</a>
+            <a href="#contacts" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Контакты и заявка</a>
+        </div>
+
+        <!-- Индикатор прогресса прокрутки -->
+        <div class="w-full h-[2px] bg-slate-800/60 overflow-hidden">
+            <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-steel-400 via-coral-500 to-coral-400 w-0 transition-[width] duration-75"></div>
+        </div>
+    </header>
+
+    <main id="top" class="relative z-10 pt-24 sm:pt-32">
+
+        <!-- =====================================================================
+             2. ПЕРВЫЙ ЭКРАН (HERO)
+        ====================================================================== -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
+            <div class="relative rounded-3xl glass-card p-6 sm:p-10 lg:p-14 overflow-hidden border border-slate-700/50">
+                <!-- Декоративная фоновая цифра «5+» как на обложке PDF -->
+                <div class="pointer-events-none select-none absolute -right-6 -top-10 sm:right-6 sm:-top-6 font-sans font-extrabold text-[150px] sm:text-[240px] lg:text-[300px] leading-none text-steel-400/[0.06] tracking-tighter" aria-hidden="true">
+                    5+
+                </div>
+                <!-- Декоративные ромбы-модули -->
+                <div class="hidden lg:block pointer-events-none absolute right-14 bottom-12 w-24 h-24 border border-coral-500/25 rounded-2xl rhombus-badge" aria-hidden="true"></div>
+                <div class="hidden lg:block pointer-events-none absolute right-28 bottom-24 w-12 h-12 bg-steel-400/10 border border-steel-400/25 rounded-xl rhombus-badge" aria-hidden="true"></div>
+
+                <div class="relative z-10 max-w-4xl">
+                    <!-- Бейдж -->
+                    <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-graphite-950/90 border border-slate-700/80 mb-6">
+                        <span class="w-2 h-2 rounded-full bg-coral-500"></span>
+                        <span class="font-mono text-xs font-medium tracking-wider text-slate-300 uppercase">ПОРТФОЛИО 2026 • УДАЛЁННАЯ РАБОТА</span>
+                    </div>
+
+                    <!-- Имя и специализация -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+                        Павел Перов
+                    </h1>
+                    <p class="mt-3 font-mono text-sm sm:text-base lg:text-lg font-semibold tracking-wide text-coral-400 uppercase">
+                        Мультимедиа-дизайнер &bull; AI-дизайнер
+                    </p>
+
+                    <!-- Главный слоган -->
+                    <div class="mt-6 sm:mt-8 pl-4 sm:pl-5 border-l-2 border-coral-500">
+                        <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-100 leading-snug">
+                            Визуальные коммуникации: от данных к истории
+                        </p>
+                    </div>
+
+                    <!-- Краткое позиционирование -->
+                    <p class="mt-5 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl">
+                        Дизайнер с управленческим прошлым и инженерным складом ума. Превращаю сложные данные, отчёты и смыслы в ясную визуальную логику: от полиграфии и инфографики до презентаций, видеомонтажа и ИИ-генерации.
+                    </p>
+
+                    <!-- Ключевые компетенции (плашки/чипы) -->
+                    <div class="mt-7 flex flex-wrap gap-2">
+                        <span class="px-3.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-coral-400"></i> Инфографика и данные
+                        </span>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="book-open" class="w-3.5 h-3.5 text-steel-400"></i> Полиграфия и сборники
+                        </span>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="presentation" class="w-3.5 h-3.5 text-coral-400"></i> Презентации и моушн
+                        </span>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-medium text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-steel-400"></i> AI-дизайн и промпт-инжиниринг
+                        </span>
+                        <span class="px-3.5 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-mono font-medium text-slate-200 flex items-center gap-1.5">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-coral-400"></i> Affinity &amp; Adobe CC
+                        </span>
+                    </div>
+
+                    <!-- Кнопки CTA -->
+                    <div class="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                        <a href="#cases" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm sm:text-base shadow-xl shadow-coral-500/25 transition-all active:scale-95">
+                            <span>Смотреть кейсы</span>
+                            <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#contacts" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-600/70 text-white font-semibold text-sm sm:text-base transition-all active:scale-95">
+                            <i data-lucide="message-square" class="w-4 h-4 text-steel-400"></i>
+                            <span>Обсудить проект</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4 ключевые метрики-паспорта -->
+                <div class="relative z-10 mt-10 sm:mt-14 pt-8 border-t border-slate-800/90 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="rounded-2xl bg-graphite-950/75 border border-slate-800 p-5 flex flex-col justify-between">
+                        <span class="font-mono text-3xl sm:text-4xl font-extrabold text-coral-400 tracking-tight">5+</span>
+                        <p class="mt-2 text-xs sm:text-sm text-slate-300 leading-snug">лет в визуальных коммуникациях</p>
+                    </div>
+                    <div class="rounded-2xl bg-graphite-950/75 border border-slate-800 p-5 flex flex-col justify-between">
+                        <span class="font-mono text-3xl sm:text-4xl font-extrabold text-steel-400 tracking-tight">15+</span>
+                        <p class="mt-2 text-xs sm:text-sm text-slate-300 leading-snug">лет системного и управленческого опыта</p>
+                    </div>
+                    <div class="rounded-2xl bg-graphite-950/75 border border-slate-800 p-5 flex flex-col justify-between">
+                        <span class="font-mono text-3xl sm:text-4xl font-extrabold text-white tracking-tight">300+</span>
+                        <p class="mt-2 text-xs sm:text-sm text-slate-300 leading-snug">выпущенных материалов: посты, сборники, презентации</p>
+                    </div>
+                    <div class="rounded-2xl bg-graphite-950/75 border border-slate-800 p-5 flex flex-col justify-between">
+                        <span class="font-mono text-3xl sm:text-4xl font-extrabold text-coral-400 tracking-tight">7</span>
+                        <p class="mt-2 text-xs sm:text-sm text-slate-300 leading-snug">ИИ-инструментов в рабочем процессе</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             3. БЛОК «ОБО МНЕ» И СТЕК НАВЫКОВ
+        ====================================================================== -->
+        <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 reveal">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+                <div>
+                    <span class="font-mono text-xs uppercase tracking-widest text-coral-400">01 // ПРОФИЛЬ И КОМПЕТЕНЦИИ</span>
+                    <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                        Дизайнер с управленческим прошлым и инженерным складом ума
+                    </h2>
+                </div>
+                <span class="font-mono text-xs text-slate-400 bg-graphite-900/90 border border-slate-800 px-3.5 py-2 rounded-xl self-start md:self-auto">
+                    Ростов-на-Дону • Удалённо
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Левая колонка: Фото (avatar.jpg с умным fallback) + Цитата -->
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="rounded-3xl glass-card p-4 border border-slate-700/60 relative group">
+                        <div class="relative aspect-[4/5] w-full rounded-2xl overflow-hidden bg-graphite-950 border border-slate-800">
+                            <!-- Реальное фото автора: при отсутствии файла avatar.jpg срабатывает onerror -->
+                            <img 
+                                id="author-avatar"
+                                src="avatar.jpg" 
+                                alt="Павел Перов — мультимедиа-дизайнер и AI-дизайнер" 
+                                class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
+                                onerror="this.style.display='none'; document.getElementById('avatar-fallback').classList.remove('hidden');"
+                            >
+                            <!-- Векторный fallback-портрет-монограмма, если avatar.jpg ещё не загружен -->
+                            <div id="avatar-fallback" class="hidden w-full h-full flex flex-col items-center justify-between p-6 bg-gradient-to-b from-graphite-850 via-graphite-900 to-graphite-950 text-center">
+                                <div class="w-full flex items-center justify-between font-mono text-[10px] text-slate-500">
+                                    <span>ID // PAPER-2026</span>
+                                    <span class="text-coral-400">AVATAR.JPG</span>
+                                </div>
+                                <div class="my-auto flex flex-col items-center">
+                                    <svg class="w-32 h-32 text-slate-300" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6" y="6" width="108" height="108" rx="24" fill="#0F172A" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="1.5"/>
+                                        <path d="M60 14L106 60L60 106L14 60L60 14Z" stroke="#F97316" stroke-opacity="0.4" stroke-width="1.2"/>
+                                        <circle cx="60" cy="46" r="16" stroke="#F1F5F9" stroke-width="2"/>
+                                        <path d="M32 92C35 76 46 68 60 68C74 68 85 76 88 92" stroke="#F1F5F9" stroke-width="2" stroke-linecap="round"/>
+                                        <circle cx="88" cy="32" r="4" fill="#F97316"/>
+                                    </svg>
+                                    <span class="mt-4 font-mono text-xs font-semibold text-white tracking-wider">ПАВЕЛ ПЕРОВ</span>
+                                    <span class="mt-1 text-[11px] text-slate-400 max-w-[210px] leading-snug">
+                                        Положите файл <code class="text-coral-400">avatar.jpg</code> рядом с <code class="text-steel-400">index.html</code>
+                                    </span>
+                                </div>
+                                <div class="w-full pt-3 border-t border-slate-800/80 font-mono text-[10px] text-slate-400">
+                                    Фото &rarr; скетч / портрет автора
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 px-2 flex items-center justify-between text-xs text-slate-400 font-mono">
+                            <span>Павел Перов (PaPer)</span>
+                            <span class="text-coral-400">5+ лет в дизайне</span>
+                        </div>
+                    </div>
+
+                    <!-- Цитата-акцент -->
+                    <blockquote class="rounded-3xl bg-gradient-to-br from-coral-500/15 via-graphite-900 to-graphite-950 border border-coral-500/35 p-6">
+                        <i data-lucide="quote" class="w-7 h-7 text-coral-400 mb-3"></i>
+                        <p class="text-base sm:text-lg font-bold text-white leading-snug">
+                            «Я говорю на одном языке с заказчиком, потому что сам когда-то сидел по другую сторону стола»
+                        </p>
+                    </blockquote>
+                </div>
+
+                <!-- Правая колонка: Текст о подходе + 4 карточки компетенций -->
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="rounded-3xl glass-card p-6 sm:p-8 space-y-4 text-slate-200 text-base sm:text-[17px] leading-relaxed">
+                        <p>
+                            Более 5 лет создаю визуальные коммуникации полного цикла: от полиграфии и инфографики до видеомонтажа и моушн-дизайна. Не просто «рисую картинки», а решаю бизнес-задачи: структурирую сложные данные, выстраиваю визуальную логику и говорю на одном языке с заказчиком.
+                        </p>
+                        <p>
+                            Один из первых в своей среде внедрил нейросети в рабочий процесс — использую ИИ как инструмент генерации идей и референсов, сохраняя авторский контроль над финальным результатом.
+                        </p>
+                        <p class="text-slate-300">
+                            В прошлом — руководитель и инженер-оптимизатор. Этот бэкграунд позволяет мне видеть дизайн не как эстетику, а как систему: от сбора данных до финального результата.
+                        </p>
+                    </div>
+
+                    <!-- 4 карточки компетенций (точно по структуре PDF-портфолио) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Карточка 1: Дизайн -->
+                        <div class="rounded-2xl glass-card glass-card-hover p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-coral-500/15 border border-coral-500/30 flex items-center justify-center text-coral-400">
+                                    <i data-lucide="pen-tool" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-bold text-lg text-white">Дизайн</h3>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span><strong class="text-white">Affinity:</strong> Designer, Photo, Publisher</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span><strong class="text-white">Adobe CC:</strong> Photoshop, Illustrator, InDesign, After Effects, Premiere Pro</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span>Полиграфия, инфографика, корпоративные презентации</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Карточка 2: ИИ-инструменты -->
+                        <div class="rounded-2xl glass-card glass-card-hover p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-steel-400/15 border border-steel-400/30 flex items-center justify-center text-steel-400">
+                                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-bold text-lg text-white">ИИ-инструменты</h3>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Генерация изображений и видео (Qwen, Gemini, ChatGPT, Flow, Midjourney)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Промпт-инжиниринг и автоматизация рабочих процессов</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Нейросетевая обработка и реставрация архивных фото</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Карточка 3: Управление и аналитика -->
+                        <div class="rounded-2xl glass-card glass-card-hover p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-steel-400/15 border border-steel-400/30 flex items-center justify-center text-steel-400">
+                                    <i data-lucide="network" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-bold text-lg text-white">Управление и аналитика</h3>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Оптимизация рабочих процессов и поиск узких мест</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Работа с большими массивами данных и отчётностью</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-steel-400 mt-1">&bull;</span>
+                                    <span>Стратегическое планирование и фокус на бизнес-задаче</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Карточка 4: Личные качества -->
+                        <div class="rounded-2xl glass-card glass-card-hover p-6">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-coral-500/15 border border-coral-500/30 flex items-center justify-center text-coral-400">
+                                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="font-bold text-lg text-white">Личные качества</h3>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span>Системное мышление и самоорганизация (5 лет удалённой работы)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span>Железная дисциплина (регулярный бег 10–12 км и силовые тренировки)</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-coral-400 mt-1">&bull;</span>
+                                    <span class="text-white font-medium">«Прихожу в проект вовремя и с кофе»</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             4. ИНТЕРАКТИВНАЯ ГАЛЕРЕЯ КЕЙСОВ (12 РЕАЛЬНЫХ КЕЙСОВ ИЗ PDF)
+        ====================================================================== -->
+        <section id="cases" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 reveal">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+                <div>
+                    <span class="font-mono text-xs uppercase tracking-widest text-coral-400">02 // ПОРТФОЛИО ПРОЕКТОВ</span>
+                    <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                        Избранные кейсы 2023–2026
+                    </h2>
+                    <p class="mt-2 text-sm sm:text-base text-slate-400 max-w-2xl">
+                        Нажмите на любой кейс, чтобы открыть слайдер работ, разбор задачи, дизайн-решений и ключевых фактов. Новые файлы из папки <code class="text-coral-400 font-mono">cases/</code> подхватываются автоматически после обновления страницы.
+                    </p>
+                </div>
+
+                <!-- Фильтр категорий -->
+                <div id="case-filters" class="flex flex-wrap gap-2" role="tablist" aria-label="Фильтр проектов по категориям">
+                    <button type="button" data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-coral-500 text-white shadow-lg shadow-coral-500/20 transition-all">
+                        Все (12)
+                    </button>
+                    <button type="button" data-filter="stats-media" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                        Статистика и медиа
+                    </button>
+                    <button type="button" data-filter="books-calendars" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                        Сборники и календари
+                    </button>
+                    <button type="button" data-filter="presentations-video" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                        Презентации и видео
+                    </button>
+                    <button type="button" data-filter="graphics-posters" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                        Графика и постеры
+                    </button>
+                </div>
+            </div>
+
+            <!-- Сетка карточек кейсов (рендерится из JS на основе реальных данных PDF и папки cases/) -->
+            <div id="cases-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Карточки подставляются скриптом -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             5. БЛОК «ПОДХОД И УСЛУГИ»
+        ====================================================================== -->
+        <section id="services" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 reveal">
+            <div class="mb-10">
+                <span class="font-mono text-xs uppercase tracking-widest text-coral-400">03 // ЧЕМ ПОЛЕЗЕН БИЗНЕСУ И РЕДАКЦИЯМ</span>
+                <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Направления работы и формат сотрудничества
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Услуга 1 -->
+                <div class="rounded-3xl glass-card glass-card-hover p-7 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="font-mono text-xs px-3 py-1 rounded-lg bg-coral-500/15 text-coral-400 border border-coral-500/30">01 // ДАННЫЕ</span>
+                            <i data-lucide="pie-chart" class="w-6 h-6 text-coral-400"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white">Инфографика и дата-сторителлинг</h3>
+                        <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
+                            Превращаю массивы статистики, отчёты и исследования в наглядные карточки для соцсетей (ВКонтакте, Telegram), СМИ и публичных выступлений. Сохраняю точность цифр и регламент.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-slate-400">
+                        Серии карточек • Модульные шаблоны • Рубрикаторы
+                    </div>
+                </div>
+
+                <!-- Услуга 2 -->
+                <div class="rounded-3xl glass-card glass-card-hover p-7 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="font-mono text-xs px-3 py-1 rounded-lg bg-steel-400/15 text-steel-400 border border-steel-400/30">02 // ПРЕЗЕНТАЦИИ</span>
+                            <i data-lucide="monitor-play" class="w-6 h-6 text-steel-400"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white">Корпоративные презентации и моушн-данные</h3>
+                        <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
+                            Структурирую смыслы, пересобираю сложные слайды «До и После», проектирую анимацию графиков и показателей, где каждый элемент выходит в порядке смысла.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-slate-400">
+                        PowerPoint • Анимация данных • Видеоформат
+                    </div>
+                </div>
+
+                <!-- Услуга 3 -->
+                <div class="rounded-3xl glass-card glass-card-hover p-7 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="font-mono text-xs px-3 py-1 rounded-lg bg-steel-400/15 text-steel-400 border border-steel-400/30">03 // ПОЛИГРАФИЯ</span>
+                            <i data-lucide="book-marked" class="w-6 h-6 text-steel-400"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white">Сборники, календари и многостраничные издания</h3>
+                        <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
+                            Полный цикл вёрстки и дизайна в Affinity Publisher / InDesign: от навигационной сетки и обложки до препресса и подготовки макетов к типографии.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-slate-400">
+                        Годовые отчёты • Юбилейные издания • Календари
+                    </div>
+                </div>
+
+                <!-- Услуга 4 -->
+                <div class="rounded-3xl glass-card glass-card-hover p-7 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <span class="font-mono text-xs px-3 py-1 rounded-lg bg-coral-500/15 text-coral-400 border border-coral-500/30">04 // AI-ПРОДАКШН</span>
+                            <i data-lucide="wand-2" class="w-6 h-6 text-coral-400"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white">ИИ-генерация, коллажи и постеры</h3>
+                        <p class="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
+                            Создаю видеоролики с ИИ-ведущими и историческими реконструкциями, реставрирую архивные фото, собираю многослойные коллажи и акцидентные постеры.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-slate-400">
+                        AI Video &amp; Image • Affinity Photo &amp; Designer
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             6. ФИНАЛЬНЫЙ БЛОК И КОНТАКТЫ
+        ====================================================================== -->
+        <section id="contacts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24 reveal">
+            <div class="rounded-3xl glass-card p-6 sm:p-10 lg:p-14 border border-slate-700/70 relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
+                    <!-- Левая часть: Призыв и прямые контакты -->
+                    <div class="lg:col-span-6 space-y-6">
+                        <span class="font-mono text-xs uppercase tracking-widest text-coral-400">04 // КОНТАКТЫ И СТАРТ ПРОЕКТА</span>
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                            Портфолио закончилось.<br>
+                            <span class="text-coral-400">Начинается ваш проект.</span>
+                        </h2>
+                        <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+                            Дизайн — это не украшение данных. Это способ сделать сложное понятным, а понятное запоминающимся. Если ваш проект требует структуры, визуальной логики и автора, который говорит на языке бизнеса — напишите мне.
+                        </p>
+
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-graphite-950/90 border border-slate-800 text-xs sm:text-sm text-slate-200">
+                            <i data-lucide="coffee" class="w-4 h-4 text-coral-400"></i>
+                            <span>Отвечаю в течение рабочего дня. P.S. Прихожу в проект вовремя и с кофе.</span>
+                        </div>
+
+                        <!-- Кнопки быстрой связи -->
+                        <div class="pt-2 space-y-3">
+                            <a href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-4 px-5 py-3.5 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-coral-500/25 transition-all">
+                                <span class="flex items-center gap-2.5">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                    <span>Telegram: @your_telegram</span>
+                                </span>
+                                <i data-lucide="external-link" class="w-4 h-4 opacity-80"></i>
+                            </a>
+
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button id="copy-email-btn" type="button" data-email="email@yourdomain.com" class="inline-flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-graphite-950/90 hover:bg-slate-800 border border-slate-700/80 text-sm font-mono text-slate-200 transition-colors">
+                                    <span class="flex items-center gap-2">
+                                        <i data-lucide="mail" class="w-4 h-4 text-steel-400"></i>
+                                        <span>email@yourdomain.com</span>
+                                    </span>
+                                    <span class="text-[11px] text-coral-400 underline">Копировать</span>
+                                </button>
+
+                                <a href="tel:+70000000000" class="inline-flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-graphite-950/90 hover:bg-slate-800 border border-slate-700/80 text-sm font-mono text-slate-200 transition-colors">
+                                    <i data-lucide="phone" class="w-4 h-4 text-coral-400"></i>
+                                    <span>+7 (XXX) XXX-XX-XX</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правая часть: Интерактивная форма заявки -->
+                    <div class="lg:col-span-6">
+                        <form id="contact-form" class="rounded-3xl bg-graphite-950/85 border border-slate-800 p-6 sm:p-8 space-y-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-lg sm:text-xl font-bold text-white">Быстрая заявка на проект</h3>
+                                <span class="font-mono text-[11px] text-slate-400">Удалённо / Полный день</span>
+                            </div>
+
+                            <div>
+                                <label for="client-name" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Как к вам обращаться</label>
+                                <input id="client-name" name="name" type="text" required placeholder="Например, Алексей" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="client-contact" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Telegram или Email</label>
+                                    <input id="client-contact" name="contact" type="text" required placeholder="@username или почта" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors">
+                                </div>
+                                <div>
+                                    <label for="project-type" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Направление задачи</label>
+                                    <select id="project-type" name="type" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white text-sm focus:outline-none focus:border-coral-500 transition-colors">
+                                        <option value="Инфографика / соцсети">Инфографика / соцсети</option>
+                                        <option value="Презентация / моушн">Презентация / моушн</option>
+                                        <option value="Сборник / полиграфия">Сборник / полиграфия</option>
+                                        <option value="AI-видео / генерация / постер">AI-видео / генерация / постер</option>
+                                        <option value="Постоянная работа / другое">Постоянная работа / другое</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="project-task" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Кратко о задаче и сроках</label>
+                                <textarea id="project-task" name="task" rows="3" placeholder="Опишите исходные данные, формат результата или желаемый дедлайн..." class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors resize-none"></textarea>
+                            </div>
+
+                            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm shadow-lg shadow-coral-500/20 transition-all active:scale-95">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                    <span>Сформировать заявку</span>
+                                </button>
+                                <button id="prepare-tg-btn" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-colors">
+                                    <i data-lucide="copy" class="w-4 h-4 text-steel-400"></i>
+                                    <span>Скопировать текст</span>
+                                </button>
+                            </div>
+
+                            <!-- Блок подтверждения после отправки -->
+                            <div id="form-success-box" class="hidden rounded-2xl bg-emerald-950/50 border border-emerald-500/40 p-4 text-xs sm:text-sm text-emerald-200 space-y-2.5">
+                                <div class="font-bold text-emerald-300 flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    <span>Заявка готова к отправке!</span>
+                                </div>
+                                <p class="text-slate-300">
+                                    Поскольку сайт размещён как статическая страница, текст заявки сформирован и скопирован. Нажмите кнопку ниже, чтобы сразу отправить его в Telegram:
+                                </p>
+                                <div class="flex flex-wrap gap-2 pt-1">
+                                    <a id="direct-tg-link" href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors">
+                                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                                        <span>Открыть Telegram с текстом</span>
+                                    </a>
+                                    <button id="copy-payload-btn" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs transition-colors">
+                                        <span>Скопировать повторно</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =====================================================================
+         ПОДВАЛ (FOOTER)
+    ====================================================================== -->
+    <footer class="relative z-10 border-t border-slate-800/80 bg-graphite-950/90 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div class="flex items-center gap-3">
+                <span class="font-mono font-bold text-slate-200">PaPer</span>
+                <span>&bull;</span>
+                <span>Павел Перов — Мультимедиа-дизайнер • AI-дизайнер</span>
+            </div>
+            <div class="font-mono text-slate-500">
+                Визуальные коммуникации: от данных к истории &copy; 2026
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         МОДАЛЬНОЕ ОКНО ПОДРОБНОГО РАЗБОРА КЕЙСА СО СЛАЙДЕРОМ РАБОТ
+    ====================================================================== -->
+    <div id="case-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-graphite-950/85 backdrop-blur-md">
+        <div class="modal-panel relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl bg-graphite-900 border border-slate-700/80 shadow-2xl">
+            <!-- Верхняя панель модалки -->
+            <div class="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-graphite-900/95 backdrop-blur-md border-b border-slate-800">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span id="modal-case-num" class="shrink-0 font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-coral-500/15 text-coral-400 border border-coral-500/30">КЕЙС 01</span>
+                    <span id="modal-platform" class="font-mono text-xs text-slate-400 truncate">ВКонтакте / Ростовстат</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="modal-fullscreen-btn" type="button" class="hidden inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-mono text-slate-200 transition-colors" title="Открыть слайд на весь экран">
+                        <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-coral-400"></i>
+                        <span class="hidden sm:inline">На весь экран</span>
+                    </button>
+                    <button id="modal-close-btn" type="button" aria-label="Закрыть окно" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Контент модального окна -->
+            <div class="p-4 sm:p-8 space-y-6">
+                <!-- Интерактивный просмотрщик слайдов / видео / архитектурной заглушки -->
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-graphite-950 relative">
+                    <div id="modal-visual" class="w-full h-64 sm:h-80 md:h-[420px] relative flex items-center justify-center overflow-hidden">
+                        <!-- Сюда подставляется реальное изображение, видео или архитектурная карточка -->
+                    </div>
+
+                    <!-- Элементы управления слайдером (показываются, если в кейсе > 1 слайда) -->
+                    <button id="slide-prev-btn" type="button" aria-label="Предыдущий слайд" class="hidden absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl bg-graphite-950/85 hover:bg-coral-500 border border-slate-700/80 text-white flex items-center justify-center shadow-lg transition-all active:scale-95">
+                        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button id="slide-next-btn" type="button" aria-label="Следующий слайд" class="hidden absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-xl bg-graphite-950/85 hover:bg-coral-500 border border-slate-700/80 text-white flex items-center justify-center shadow-lg transition-all active:scale-95">
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Счётчик слайдов и имя файла -->
+                    <div id="slide-hud" class="hidden absolute bottom-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none">
+                        <span id="slide-filename" class="px-3 py-1 rounded-lg bg-graphite-950/85 backdrop-blur-md border border-slate-800 font-mono text-[11px] text-slate-300">
+                            cases/case-01.png
+                        </span>
+                        <span id="slide-counter" class="px-3 py-1 rounded-lg bg-graphite-950/90 backdrop-blur-md border border-coral-500/40 font-mono text-xs font-bold text-coral-400">
+                            1 / 7
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Лента миниатюр слайдов -->
+                <div id="modal-thumbnails" class="hidden flex items-center gap-2.5 overflow-x-auto pb-1 no-scrollbar">
+                    <!-- Миниатюры подставляются из JS -->
+                </div>
+
+                <div>
+                    <h3 id="modal-title" class="text-2xl sm:text-3xl font-extrabold text-white leading-tight"></h3>
+                    <p id="modal-subtitle" class="mt-2 text-base sm:text-lg font-medium text-coral-400"></p>
+                </div>
+
+                <!-- Задача и Факты -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="p-5 rounded-2xl bg-graphite-950/80 border border-slate-800">
+                        <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-steel-400 mb-2.5">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            <span>Задача и контекст</span>
+                        </div>
+                        <p id="modal-task" class="text-sm sm:text-base text-slate-300 leading-relaxed"></p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-graphite-950/80 border border-slate-800">
+                        <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-coral-400 mb-2.5">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                            <span>Факты и артефакты</span>
+                        </div>
+                        <ul id="modal-facts" class="space-y-2 text-sm text-slate-300"></ul>
+                    </div>
+                </div>
+
+                <!-- Дизайн-решения и акценты -->
+                <div class="p-5 sm:p-6 rounded-2xl bg-slate-800/40 border border-slate-700/60">
+                    <div class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-white mb-3">
+                        <i data-lucide="compass" class="w-4 h-4 text-coral-400"></i>
+                        <span>Дизайн-решения и акценты</span>
+                    </div>
+                    <ul id="modal-solutions" class="space-y-2.5 text-sm sm:text-base text-slate-200 leading-relaxed"></ul>
+                </div>
+
+                <!-- Авторский инсайт из PDF -->
+                <div class="p-5 rounded-2xl bg-gradient-to-r from-coral-500/15 to-transparent border-l-4 border-coral-500">
+                    <span class="font-mono text-[11px] uppercase tracking-wider text-coral-400 block mb-1">Ключевой принцип автора</span>
+                    <p id="modal-insight" class="text-sm sm:text-base font-bold text-white italic"></p>
+                </div>
+            </div>
+
+            <!-- Нижняя навигация по кейсам -->
+            <div class="px-4 sm:px-8 py-4 bg-graphite-950/90 border-t border-slate-800 flex items-center justify-between gap-4">
+                <button id="modal-prev-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-semibold text-slate-200 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Предыдущий кейс</span>
+                </button>
+                <a href="#contacts" id="modal-discuss-btn" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-coral-500/20 hover:bg-coral-500/30 border border-coral-500/40 text-coral-300 text-xs sm:text-sm font-semibold transition-colors">
+                    <span>Хочу похожее решение</span>
+                </a>
+                <button id="modal-next-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-semibold text-slate-200 transition-colors">
+                    <span>Следующий кейс</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         ПОЛНОЭКРАННЫЙ ЛАЙТБОКС-ЛУПА ДЛЯ ДЕТАЛЬНОГО РАССМОТРЕНИЯ СЛАЙДОВ
+    ====================================================================== -->
+    <div id="fullscreen-lightbox" role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр слайда" class="lightbox-backdrop fixed inset-0 z-[60] bg-graphite-950/95 backdrop-blur-xl flex flex-col">
+        <div class="flex items-center justify-between px-4 sm:px-8 py-4 border-b border-slate-800/80">
+            <div class="flex items-center gap-3">
+                <span id="lb-title" class="font-bold text-sm sm:text-base text-white">Кейс 01</span>
+                <span id="lb-counter" class="font-mono text-xs px-2.5 py-1 rounded-lg bg-coral-500/20 text-coral-400">1 / 7</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="lb-zoom-btn" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition-colors">
+                    <i data-lucide="zoom-in" class="w-4 h-4 text-steel-400"></i>
+                    <span id="lb-zoom-label">Увеличить (100%)</span>
+                </button>
+                <button id="lb-close-btn" type="button" aria-label="Закрыть полноэкранный режим" class="p-2 rounded-xl bg-slate-800 hover:bg-coral-500 text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="lb-stage" class="relative flex-1 overflow-auto flex items-center justify-center p-4 sm:p-8 select-none">
+            <img id="lb-image" src="" alt="Полноэкранный слайд" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-transform duration-300 cursor-zoom-in">
+
+            <button id="lb-prev-btn" type="button" aria-label="Предыдущий слайд" class="fixed left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-graphite-900/90 hover:bg-coral-500 border border-slate-700 text-white flex items-center justify-center shadow-xl transition-colors">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <button id="lb-next-btn" type="button" aria-label="Следующий слайд" class="fixed right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-graphite-900/90 hover:bg-coral-500 border border-slate-700 text-white flex items-center justify-center shadow-xl transition-colors">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         JAVASCRIPT: ДАННЫЕ КЕЙСОВ, УМНЫЙ ЗАГРУЗЧИК CASES/, СЛАЙДЕР И ЛАЙТБОКС
+    ====================================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            /* -----------------------------------------------------------------
+               1. БАЗА ДАННЫХ ВСЕХ 12 РЕАЛЬНЫХ КЕЙСОВ ИЗ PDF-ПОРТФОЛИО
+            ------------------------------------------------------------------ */
+            const casesData = [
+                {
+                    id: 1,
+                    num: 'КЕЙС 01',
+                    code: '01',
+                    category: 'stats-media',
+                    categoryLabel: 'Статистика и медиа',
+                    platform: 'ВКонтакте / Ростовстат',
+                    year: '2026',
+                    title: 'Официальный регистр',
+                    subtitle: 'Государственная статистика, которая останавливает скролл',
+                    summary: 'Адаптация сложных макроэкономических и демографических данных для широкой аудитории ВКонтакте с соблюдением официального регламента и без кликбейта.',
+                    task: 'Адаптировать сложные макроэкономические и демографические данные для широкой аудитории ВКонтакте, сохранив абсолютную достоверность и соответствие официальному регламенту. Заставить читателя остановиться на посте без кликбейта.',
+                    facts: [
+                        '597,1 млн штук яиц произведено в Ростовской области в январе–мае 2026 года (+10,1% к прошлому периоду)',
+                        '100 967 км² — площадь территории области (12 городских округов и 43 муниципальных района)',
+                        '207,9 тыс. туристов отправлены турфирмами из Ростовской области в туры по России (+35,6%)',
+                        'Интерактивный формат «Статистический ребус» и рубрика #ЦифраДня'
+                    ],
+                    solutions: [
+                        'Модульная сетка: единая структура поста — дата-«таблетка», цифра-якорь, акцентная плашка, герб как знак достоверности.',
+                        'Цветовая семантика: оранжевый для главного, зелёный для роста, розовый для сравнений — цвет читается раньше текста.',
+                        'Фото-метафоры: конвейер для яиц, карта области, путешественница для туризма — образ объясняет данные до того, как их прочитали.'
+                    ],
+                    insight: '«Задача дизайнера — не украсить цифры. Задача — выбрать интонацию, которая подходит аудитории и регламенту.»',
+                    accentColor: 'coral'
+                },
+                {
+                    id: 2,
+                    num: 'КЕЙС 02',
+                    code: '02',
+                    category: 'stats-media',
+                    categoryLabel: 'Статистика и медиа',
+                    platform: 'Telegram / «ЦеноВед»',
+                    year: '2025',
+                    title: 'Авторский регистр',
+                    subtitle: 'Те же цифры — но человеческим языком',
+                    summary: 'Создание с нуля медиапродукта о ценах и инфляции: от нейминга и системы хэштегов-рубрик до модульных шаблонов и якорных сравнений.',
+                    task: 'Создать с нуля медиапродукт о ценах и инфляции: от нейминга и рубрикатора до модульной системы шаблонов. Подать те же данные, что в официальной статистике, но без «позитивного фильтра» — честно, с иронией и на языке личного опыта читателя.',
+                    facts: [
+                        'Система хэштегов-рубрик: #ценоБарометр, #ценоВремени, #ценоПад, #ценоШок, #ценоОбуч, #ценоТранспорт',
+                        'Якорные сравнения: буханка хлеба выросла в 10 раз за 25 лет с маркерами кризисов (95,81 руб.)',
+                        'Бутыль воды в 341 раз дороже водопроводной; анализ цен по городам на сметану, морковь (51,01 руб./кг), огурцы (222,94 руб./кг) и стоимость проезда'
+                    ],
+                    solutions: [
+                        'Нейминг и рубрикатор: бренд «ЦеноВед» и сквозная навигация по хэштегам, формирующая привычку возвращаться.',
+                        'Якорные сравнения: сложная статистика инфляции подаётся через понятный бытовой масштаб — факт, после которого «щёлкает».',
+                        'Живая интонация: редакционные метафоры («борщевой набор пошёл в рост», «коронка посеребрилась») — дата-журналистика с человеческим лицом.'
+                    ],
+                    insight: '«Следим за ценами, анализируем тренды и говорим простыми словами о том, куда всё двигается.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 3,
+                    num: 'КЕЙС 03',
+                    code: '03',
+                    category: 'books-calendars',
+                    categoryLabel: 'Сборники и календари',
+                    platform: 'Ростовстат / Серия сборников',
+                    year: '2024–2026',
+                    title: 'Навигационные системы',
+                    subtitle: 'Один модуль — разные данные: ромб выдерживает иллюстрацию, фотографию и юбилейную эмблему',
+                    summary: 'Единый конструктивный модуль (квадрат, повёрнутый на 45°): «Импульс Юга 2026», «Малый и средний бизнес Дона: 2021–2024» и «Мясниковский район: 100 лет».',
+                    task: 'Разработать узнаваемую систему оформления серии статистических сборников разной тематики, где единый геометрический модуль связывает издания без визуального однообразия.',
+                    facts: [
+                        '«Импульс Юга: траектория креативной экономики Дона» (Выпуск 3, 2026) — 4 цветовых входа в массив данных',
+                        '«Малый и средний бизнес Дона: 2021–2024» (2024) — диагональная мозаика реальных производственных кадров на глубоком синем поле',
+                        '«Мясниковский район: демографический портрет в 100-летней ретроспективе» (1926–2026) — юбилейная эмблема на контрастном белом ромбе'
+                    ],
+                    solutions: [
+                        'Ромб как навигационный якорь: повторяющаяся форма (45°) определяет раздел быстрее оглавления, а мозаика обложки работает как метафора экономики, собранной из индустрий.',
+                        'Эволюция приёма: переход от векторных иллюстраций («Импульс Юга») к документальным фото цехов и панорам («МСБ» и «Мясниковский район»).',
+                        'Цветные ромбы как паузы ритма: глухие грани (тёмная, зелёная, оранжевая) дают глазу отдых между фотокадрами, чтобы мозаика дышала.'
+                    ],
+                    insight: '«Один модуль — разные данные: система узнаётся читателем с первого взгляда даже без логотипа.»',
+                    accentColor: 'coral'
+                },
+                {
+                    id: 4,
+                    num: 'КЕЙС 04',
+                    code: '04',
+                    category: 'books-calendars',
+                    categoryLabel: 'Сборники и календари',
+                    platform: 'Ростовстат / Тематические издания',
+                    year: '2023–2026',
+                    title: 'Тематическая визуализация',
+                    subtitle: 'Неон цифрового, мягкость семейного, изометрия школьного: тема диктует визуальный язык',
+                    summary: 'Три контрастных визуальных языка: «Индикаторы цифровизации на Дону 2026», «Семья на Дону в цифрах статистики 2024» и «Образование на Дону 2023».',
+                    task: 'Подобрать точный визуальный код под каждую социальную и экономическую тему: цифровизацию региона, демографию семьи и систему образования.',
+                    facts: [
+                        '«Индикаторы цифровизации на Дону» (2026) — фиолетовый градиент, голограмма карты области и парящие экраны данных',
+                        '«Семья на Дону в цифрах статистики» (Год семьи, 2024) — мягкие сине-голубые волны и силуэты поколений без стоковых клише',
+                        '«Образование на Дону в цифрах статистики» (Год педагога и наставника, 2023) — мятное поле и изометрический «рабочий стол знаний»'
+                    ],
+                    solutions: [
+                        'Карта как герой и люди внутри данных: в сборнике о цифровизации голограмма процентов проецируется из контура области, а главные герои — люди, читающие экраны.',
+                        'Фигуры без лиц вместо стоковой «счастливой семьи»: в плавных силуэтах и связывающих дугах узнаёт себя любой читатель без дешёвой сентиментальности.',
+                        'Единая изометрическая проекция: ноутбук, раскрытая книга с зелёным карандашом и розовый маркер живут в одном пространстве и считываются без пояснений.'
+                    ],
+                    insight: '«Не навязывать один шаблон разным смыслам: тема сама диктует пластику, свет и типографику.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 5,
+                    num: 'КЕЙС 05',
+                    code: '05',
+                    category: 'books-calendars',
+                    categoryLabel: 'Сборники и календари',
+                    platform: 'Ростовстат / Юбилейные и архивные издания',
+                    year: '2023–2025',
+                    title: 'Юбилейные и исторические',
+                    subtitle: 'Юбилей и архив: от праздника города к тихому голосу документов сороковых',
+                    summary: '«Таганрог в свете переписей населения. К 325-летию», «Сердце юга. Ростов-на-Дону 275» и «Донской край: предвоенный, военный и послевоенный периоды».',
+                    task: 'Создать обложки юбилейных и архивных статистических сборников без казённого пафоса и открыточной банальности, сохранив уважение к истории территорий.',
+                    facts: [
+                        '«Таганрог в свете переписей населения. К 325-летию города» (2023) — геометрическая фотомозаика памятников и современного трамвая',
+                        '«Сердце юга. Ростов-на-Дону: 1749–2024» (275 лет городу) — бежевое бумажное поле с водяными знаками достопримечательностей',
+                        '«Донской край: предвоенный, военный и послевоенный периоды. Уникальные статистические материалы 1940–1950 гг.» (2025)'
+                    ],
+                    solutions: [
+                        'Полигональная нарезка (Таганрог): кадры города нарезаны в острые многоугольники с белыми полями, как осколки памяти разных поколений.',
+                        'Рукопись против официоза (Ростов-на-Дону): курсивное «Ростов-на-Дону» рядом со строгой цифрой 275 и силуэтами моста и храма в фоне снимают казённость.',
+                        'Документальная интонация (1940–1950 гг.): фотография воинского мемориала на фоне спокойного неба и волна георгиевской ленты говорят о войне спокойно, без крикливого пафоса.'
+                    ],
+                    insight: '«Интонация обложки должна соответствовать материалу внутри: от живого ритма города до тишины архивных сводок.»',
+                    accentColor: 'coral'
+                },
+                {
+                    id: 6,
+                    num: 'КЕЙС 06',
+                    code: '06',
+                    category: 'books-calendars',
+                    categoryLabel: 'Сборники и календари',
+                    platform: 'Ростовстат / Ежегодная серия календарей',
+                    year: '2023–2026',
+                    title: 'Календари 2023–2026',
+                    subtitle: 'Год как герой композиции: 4 года в серии, 20 полос, 4 визуальные метафоры, 1 сквозной код',
+                    summary: 'Ежегодная серия календарей Ростовстата: дашборд 2023, триколор 2024 (185 лет донской статистике), ладонь 2025 и оранжевая траектория 2026.',
+                    task: 'Разрабатывать ежегодную серию календарей для Ростовстата так, чтобы сохранялась строгая институциональная узнаваемость (герб, шапка, инфографическая среда), но каждый год звучал по-новому.',
+                    facts: [
+                        '4 года в серии (2023, 2024, 2025, 2026), 20 полос в серии, 4 визуальные метафоры, 1 сквозной код',
+                        '2023 «Дашборд как обложка»: витрина данных — 205 федеральных форм и 220 млн показателей ежегодно с коралловыми навигаторами',
+                        '2024 «Цифра в триколоре»: 185 лет донской статистике — триколор внутри цифры 2024 поверх контура области',
+                        '2025 «Данные в надёжных руках» (ладонь под столбцами графиков) и 2026 «Траектория года в оранжевой ленте»'
+                    ],
+                    solutions: [
+                        'Сквозной брендкод: единая архитектура верхней шапки с гербом, типографическая иерархия и графики как естественная среда.',
+                        'Уникальная метафора каждого года: от строгого дашборда (2023) и государственной символики (2024) к человеческому масштабу ладони (2025) и динамической оранжевой траектории (2026).',
+                        'Точечные тёплые акценты (коралл, красный, оранжевая лента) на глубоком холодном фоне строят маршрут взгляда.'
+                    ],
+                    insight: '«Четыре года, четыре метафоры, один код. Серия сохраняет узнаваемость, позволяя каждому году говорить на собственном языке.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 7,
+                    num: 'КЕЙС 07',
+                    code: '07',
+                    category: 'presentations-video',
+                    categoryLabel: 'Презентации и видео',
+                    platform: 'PowerPoint / Корпоративные презентации (NDA)',
+                    year: '2024–2026',
+                    title: 'Презентации. До и После',
+                    subtitle: 'Десять слайдов как доказательство метода: сетка, типографика и данные как инфографика',
+                    summary: 'Системный редизайн перегруженных корпоративных слайдов (NDA): превращение текстовых «простыней» и хаотичных диаграмм в наглядную инфографику.',
+                    task: 'Переработать корпоративные презентации с плотным неструктурированным текстом и стандартными графиками в наглядные управленческие и продуктовые слайды (данные анонимизированы по NDA).',
+                    facts: [
+                        'Слайд «Что мы реализовали»: вынос ключевой метрики «250 новых заказов ежедневно» и разбиение текста на смысловые блоки',
+                        'Слайд «Портрет целевой аудитории»: замена 4 перегруженных круговых диаграмм на чистые акценты (комедии 39%, ядро 25–34 года 40%, смотрят чтобы отвлечься 33%)',
+                        'Слайды «Полный спектр услуг» (6 этапов по кругу), «Потребности перевозчика и пассажира» и «Аудитория проекта» (13 млн пользователей)'
+                    ],
+                    solutions: [
+                        'Сетка и воздух вместо текстовой стены: выделение главного тезиса и цифровая якорная точка на каждом слайде.',
+                        'Визуализация структуры: замена пересекающихся кругов и клипартов на чёткую циклическую схему [1]–[6] и контрастные блоки сравнения.',
+                        'Анонимизация по NDA: сохранение реальной логики и приёмов вёрстки на демонстрационных данных.'
+                    ],
+                    insight: '«До и после — это не магия, а метод: сетка, типографика и данные как инфографика.»',
+                    accentColor: 'coral'
+                },
+                {
+                    id: 8,
+                    num: 'КЕЙС 08',
+                    code: '08',
+                    category: 'presentations-video',
+                    categoryLabel: 'Презентации и видео',
+                    platform: 'PowerPoint / Коммерческие и аналитические слайды',
+                    year: '2024–2026',
+                    title: 'Презентации: пять слайдов',
+                    subtitle: 'От промо до официальной инфографики: слайд как готовый продукт собирается как плакат',
+                    summary: 'Пять самостоятельных слайдов из разных проектов: промо, продуктовые характеристики, сравнение, динамика роста и официальная инфографика.',
+                    task: 'Спроектировать разноплановые слайды под разные бизнес-задачи — от рекламного промо и продуктовой карточки до сводной государственной инфографики на одном экране.',
+                    facts: [
+                        'Промо-слайд «RUN BONNIE RUN!»: сравнение скорости (кроссовки 6,1 м/с, кеды 3,5 м/с, туфли 1,4 м/с) на динамичном фото',
+                        'Продуктовый слайд «Характеристики продукта»: выноски размеров и веса (2–3 см, 10–12 см, 250 г) с красными плашками',
+                        '«Ещё больше интернета!»: рост аудитории с 91 до 121 млн (+31% прирост) и «Анализ систем безопасности сейфов»',
+                        '«26 января — День российского студенчества»: 4 место в РФ, 13 вузов, 25 филиалов, 40 086 принято, 26 876 выпущено'
+                    ],
+                    solutions: [
+                        'Плакатная композиция: каждый слайд самодостаточен и удерживает внимание с первых секунд.',
+                        'Гибкость стиля: агрессивная типографика для промо, чистая модульная сетка для сравнительных таблиц и строгий дашборд для официальной статистики.'
+                    ],
+                    insight: '«Слайд как готовый продукт: даже один слайд собирается как плакат.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 9,
+                    num: 'КЕЙС 09',
+                    code: '09',
+                    category: 'presentations-video',
+                    categoryLabel: 'Презентации и видео',
+                    platform: 'PowerPoint / Анимация данных и ИИ-видео',
+                    year: '2026',
+                    title: 'Презентации. Видеоформат и ИИ',
+                    subtitle: 'Движение проектируется как статика: данные выходят в порядке смысла, ИИ как соавтор образа',
+                    summary: 'Анимация данных в слайдах («Период 2026», ₽103M) и видеоролики с генеративными нейросетями («150 лет встык», виртуальная ведущая, реставрация XIX века).',
+                    task: 'Оживить сложные аналитические дашборды и создать выразительный видеоконтент без натурных съёмок, объединив режиссуру тайминга, нейросетевую генерацию и инфографику.',
+                    facts: [
+                        'Анимированный дашборд «Период 2026»: общий объём продаж ₽103M, затраты на цепочку поставок ₽9.5M, средний цикл 40.9',
+                        '«Связать 150 лет»: четыре эпохи встык в одном кадре — от дореволюционной сепии до современного цифрового офиса',
+                        '«Ведущая без съёмок» у фасада Ростовстата и «Статистика XIX века с лицом» (восстановление портрета дончанки по архивным фото)'
+                    ],
+                    solutions: [
+                        'Драматургия появления: цифра набирает значение из нуля, график растёт столбец за столбцом, главный акцент садится последним.',
+                        'Жёсткий авторский отбор ИИ-генераций: каждый финальный кадр выбран и доработан из десятков вариантов под строгим контролем цвета и цифр.'
+                    ],
+                    insight: '«Промпт — это не задача. Задача — это смысл кадра, а нейросеть лишь предлагает варианты.»',
+                    hasVideoSupport: true,
+                    accentColor: 'coral'
+                },
+                {
+                    id: 10,
+                    num: 'КЕЙС 10',
+                    code: '10',
+                    category: 'graphics-posters',
+                    categoryLabel: 'Графика и постеры',
+                    platform: 'Affinity Photo / Авторская графика',
+                    year: '2024–2026',
+                    title: 'Коллажи',
+                    subtitle: 'Коллаж как авторская графика: слой за слоем, текстура за текстурой',
+                    summary: 'Художественная фотоманипуляция и многослойные коллажи в Affinity Photo, где фотография теряет документальность и приобретает живописность.',
+                    task: 'Выйти за рамки сухой документальности фотографии и создать выразительные арт-композиции для обложек, музыкальных и креативных концептов.',
+                    facts: [
+                        'Инструментарий: Affinity Photo (многослойные маски, режимы наложения, цветокоррекция, работа с фактурами и светом)',
+                        'Серия авторских визуальных композиций, включая музыкальный концепт «MUSIC» и портретные фотоманипуляции'
+                    ],
+                    solutions: [
+                        'Многослойная глубина: соединение разнородных фрагментов через единый световой и цветовой ключ.',
+                        'Живописная фактура: фотография теряет буквальность и начинает работать как метафора.'
+                    ],
+                    insight: '«Фотография теряет документальность и приобретает живописность: слой за слоем, текстура за текстурой.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 11,
+                    num: 'КЕЙС 11',
+                    code: '11',
+                    category: 'graphics-posters',
+                    categoryLabel: 'Графика и постеры',
+                    platform: 'Affinity Designer / Постеры',
+                    year: '2024–2026',
+                    title: 'Постеры',
+                    subtitle: 'Постер как графический крик: бьёт с трёх метров, держит вблизи',
+                    summary: 'Типографика и образ на максимальной громкости в Affinity Designer: «GET FIT DIGITAL», «HAVE FUN», «BELIEVE».',
+                    task: 'Создать серию графических постеров, где акцидентная типографика и контрастная композиция мгновенно захватывают внимание с дистанции и удерживают деталями вблизи.',
+                    facts: [
+                        'Инструментарий: Affinity Designer (векторная графика, модульная сетка, работа с крупной акцидентной типографикой)',
+                        'Серия плакатов: «GET FIT DIGITAL», «HAVE FUN», «BELIEVE»'
+                    ],
+                    solutions: [
+                        'Типографика на максимальной громкости: крупный масштаб, жёсткий ритм и контраст форм.',
+                        'Два уровня восприятия: плакат читается силуэтом с трёх метров и раскрывает детали при близком взгляде.'
+                    ],
+                    insight: '«Типографика и образ на максимальной громкости: бьёт с трёх метров, держит вблизи.»',
+                    accentColor: 'coral'
+                },
+                {
+                    id: 12,
+                    num: 'КЕЙС 12',
+                    code: '12',
+                    category: 'graphics-posters',
+                    categoryLabel: 'Графика и постеры',
+                    platform: 'Affinity Designer / Карточки для соцсетей',
+                    year: '2024–2026',
+                    title: 'Карточки',
+                    subtitle: 'Карточка как постер в карманном формате',
+                    summary: 'Вертикальная композиция для соцсетей: «PARTY AT MY HOUSE!», «FITNESS», «SCAN ME!» — та же образность и строгость в размере экрана смартфона.',
+                    task: 'Адаптировать плакатную выразительность и строгость модульной композиции под вертикальный мобильный формат соцсетей.',
+                    facts: [
+                        'Инструментарий: Affinity Designer (вертикальные форматы для лент и сторис)',
+                        'Серия карточек: «PARTY AT MY HOUSE!», «FITNESS», «SCAN ME!»'
+                    ],
+                    solutions: [
+                        'Адаптация под экран смартфона: вертикальная сетка, высокий контраст и мгновенное считывание призыва к действию.',
+                        'Сохранение плакатной строгости даже в компактном мобильном размере.'
+                    ],
+                    insight: '«Вертикальная композиция для соцсетей: та же образность и та же строгость в размере экрана.»',
+                    accentColor: 'steel'
+                }
+            ];
+
+            /* -----------------------------------------------------------------
+               2. УМНЫЙ ЗАГРУЗЧИК РЕАЛЬНЫХ ФАЙЛОВ ИЗ ПОДПАПОК cases/case-XX/
+                  (Автоматически проверяет 1..15 в форматах .jpg, .png, .webp и .mp4)
+            ------------------------------------------------------------------ */
+            const resolvedMediaMap = new Map(); // id -> { slides: Array<{type: 'image'|'video', src: string}> }
+
+            function probeImage(src) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve(src);
+                    img.onerror = () => resolve(null);
+                    img.src = src;
+                });
+            }
+
+            function probeVideo(src) {
+                return new Promise((resolve) => {
+                    const video = document.createElement('video');
+                    video.preload = 'metadata';
+                    video.onloadedmetadata = () => resolve(src);
+                    video.onerror = () => resolve(null);
+                    video.src = src;
+                });
+            }
+
+            async function probeFirstExisting(candidates) {
+                const results = await Promise.all(candidates.map(src => probeImage(src)));
+                return results.find(Boolean) || null;
+            }
+
+            async function discoverCaseMedia(item) {
+                const folder = `cases/case-${item.code}`;
+                const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+                // Проверяем оба варианта именования: 1.jpg..15.jpg И старый формат case-XX.jpg / case-XX-1.jpg
+                const slotCandidates = [
+                    [
+                        `${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`,
+                        `${folder}/case-${item.code}.jpg`, `${folder}/case-${item.code}.png`, `${folder}/case-${item.code}.webp`
+                    ],
+                    ...indices.slice(1).map(idx => [
+                        `${folder}/${idx}.jpg`, `${folder}/${idx}.png`, `${folder}/${idx}.webp`,
+                        `${folder}/case-${item.code}-${idx - 1}.jpg`, `${folder}/case-${item.code}-${idx - 1}.png`, `${folder}/case-${item.code}-${idx - 1}.webp`
+                    ])
+                ];
+
+                const imageResults = await Promise.all(
+                    slotCandidates.map(candidates => probeFirstExisting(candidates))
+                );
+
+                const slides = [];
+                imageResults.forEach(src => {
+                    if (src && !slides.some(s => s.src === src)) {
+                        slides.push({ type: 'image', src });
+                    }
+                });
+
+                // Проверяем наличие видеофайлов (актуально для Кейса 09 или шоурила)
+                const videoCandidates = [
+                    `${folder}/1.mp4`,
+                    `${folder}/2.mp4`,
+                    `${folder}/video.mp4`
+                ];
+                const videoResults = await Promise.all(videoCandidates.map(src => probeVideo(src)));
+                videoResults.forEach(src => {
+                    if (src) slides.push({ type: 'video', src });
+                });
+
+                resolvedMediaMap.set(item.id, { slides });
+            }
+
+            /* -----------------------------------------------------------------
+               3. АРХИТЕКТУРНАЯ ЗАГЛУШКА ДЛЯ ЕЩЁ НЕ ДОБАВЛЕННЫХ ФАЙЛОВ В cases/
+            ------------------------------------------------------------------ */
+            function getArchitecturalPlaceholderHTML(item, isModal = false) {
+                const isCoral = item.accentColor === 'coral';
+                const accentHex = isCoral ? '#F97316' : '#38BDF8';
+                const badgeBorder = isCoral ? 'border-coral-500/40 text-coral-300 bg-coral-500/10' : 'border-steel-400/40 text-steel-300 bg-steel-400/10';
+
+                return `
+                <div class="w-full h-full relative flex flex-col justify-between p-5 sm:p-6 bg-gradient-to-br from-graphite-900 via-graphite-950 to-[#060911] select-none overflow-hidden">
+                    <!-- Декоративная модульная сетка и ромб -->
+                    <div class="pointer-events-none absolute -right-8 -bottom-8 w-36 h-36 rounded-2xl border border-slate-700/40 rhombus-badge" style="border-color: ${accentHex}33;"></div>
+                    <div class="pointer-events-none absolute right-10 top-6 w-14 h-14 rounded-xl rhombus-badge" style="background: ${accentHex}14; border: 1px solid ${accentHex}33;"></div>
+
+                    <div class="relative z-10 flex items-center justify-between gap-2">
+                        <span class="font-mono text-[11px] font-bold tracking-wider px-2.5 py-1 rounded-lg border ${badgeBorder}">
+                            ${item.num} // ${item.year}
+                        </span>
+                        <span class="font-mono text-[10px] text-slate-400 bg-graphite-900/90 border border-slate-800 px-2.5 py-1 rounded-lg">
+                            Папка cases/case-${item.code}/1.jpg
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 my-auto py-2">
+                        <div class="font-mono text-xs text-slate-400 mb-1">${item.platform}</div>
+                        <div class="${isModal ? 'text-2xl sm:text-3xl' : 'text-lg sm:text-xl'} font-extrabold text-white tracking-tight leading-snug">
+                            ${item.title}
+                        </div>
+                        <p class="mt-1.5 text-xs sm:text-sm text-slate-300 max-w-xl line-clamp-2">
+                            ${item.subtitle}
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 flex items-center justify-between pt-2 border-t border-slate-800/80 font-mono text-[10px] text-slate-500">
+                        <span>Положите 1.jpg в папку cases/case-${item.code}/</span>
+                        <span style="color: ${accentHex};">PaPer 2026</span>
+                    </div>
+                </div>`;
+            }
+
+            /* -----------------------------------------------------------------
+               4. РЕНДЕР ГАЛЕРЕИ КЕЙСОВ И ФИЛЬТРАЦИЯ
+            ------------------------------------------------------------------ */
+            const casesGrid = document.getElementById('cases-grid');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            let currentFilter = 'all';
+
+            function renderCases(filter = 'all') {
+                currentFilter = filter;
+                const filtered = filter === 'all' 
+                    ? casesData 
+                    : casesData.filter(item => item.category === filter);
+
+                casesGrid.innerHTML = filtered.map((item) => {
+                    const media = resolvedMediaMap.get(item.id) || { slides: [] };
+                    const firstImageSlide = media.slides.find(s => s.type === 'image');
+                    const hasRealImage = Boolean(firstImageSlide);
+                    const slidesCount = media.slides.length;
+
+                    const visualBlock = hasRealImage
+                        ? `
+                            <img 
+                                src="${firstImageSlide.src}" 
+                                alt="${item.num}: ${item.title}" 
+                                class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-graphite-950/70 via-transparent to-graphite-950/20 pointer-events-none"></div>
+                          `
+                        : getArchitecturalPlaceholderHTML(item, false);
+
+                    return `
+                    <article 
+                        data-case-id="${item.id}" 
+                        class="case-card group rounded-3xl glass-card glass-card-hover overflow-hidden flex flex-col justify-between cursor-pointer focus-within:ring-2 focus-within:ring-coral-500"
+                        tabindex="0"
+                        role="button"
+                        aria-label="Открыть разбор: ${item.num} — ${item.title}"
+                    >
+                        <div>
+                            <!-- Превью-иллюстрация кейса -->
+                            <div class="relative h-52 w-full overflow-hidden bg-graphite-950 border-b border-slate-800/80">
+                                ${visualBlock}
+                                ${hasRealImage ? `
+                                <div class="absolute top-3 left-3 flex items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-lg bg-graphite-950/90 backdrop-blur-md border border-slate-700/80 font-mono text-[11px] font-bold text-coral-400">
+                                        ${item.num}
+                                    </span>
+                                </div>
+                                <div class="absolute top-3 right-3 flex items-center gap-1.5">
+                                    ${slidesCount > 1 ? `
+                                        <span class="px-2.5 py-1 rounded-lg bg-coral-500/90 text-white font-mono text-[10px] font-bold shadow">
+                                            ${slidesCount} слайдов
+                                        </span>
+                                    ` : ''}
+                                    <span class="px-2.5 py-1 rounded-lg bg-graphite-950/85 backdrop-blur-md border border-slate-800 font-mono text-[10px] text-slate-300">
+                                        ${item.year}
+                                    </span>
+                                </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Текстовая часть карточки -->
+                            <div class="p-6">
+                                <div class="font-mono text-xs text-steel-400 mb-2 truncate">${item.platform}</div>
+                                <h3 class="text-xl font-bold text-white group-hover:text-coral-400 transition-colors leading-snug">
+                                    ${item.title}
+                                </h3>
+                                <p class="mt-1.5 text-xs sm:text-sm font-medium text-slate-300">
+                                    ${item.subtitle}
+                                </p>
+                                <p class="mt-3 text-xs sm:text-sm text-slate-400 line-clamp-3 leading-relaxed">
+                                    ${item.summary}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-800/60 mt-2">
+                            <span class="font-mono text-[11px] text-slate-400">${item.categoryLabel}</span>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-coral-400 group-hover:translate-x-1 transition-transform">
+                                <span>${hasRealImage ? 'Смотреть работы' : 'Открыть разбор'}</span>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                            </span>
+                        </div>
+                    </article>`;
+                }).join('');
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+                document.querySelectorAll('.case-card').forEach(card => {
+                    const openHandler = () => {
+                        const id = Number(card.getAttribute('data-case-id'));
+                        openCaseModalById(id);
+                    };
+                    card.addEventListener('click', openHandler);
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openHandler();
+                        }
+                    });
+                });
+
+                bindCardTiltEffect();
+            }
+
+            /* -----------------------------------------------------------------
+               4.1. ИНТЕРАКТИВНОЕ 3D-ПОКАЧИВАНИЕ КАРТОЧЕК ЗА КУРСОРОМ МЫШИ
+            ------------------------------------------------------------------ */
+            function bindCardTiltEffect() {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                document.querySelectorAll('.glass-card-hover:not([data-tilt-bound])').forEach(card => {
+                    card.setAttribute('data-tilt-bound', 'true');
+
+                    card.addEventListener('mouseenter', () => {
+                        card.style.transition = 'transform 0.1s ease-out, border-color 0.35s ease, box-shadow 0.35s ease';
+                    });
+
+                    card.addEventListener('mousemove', (e) => {
+                        const rect = card.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+
+                        // Нормализуем координаты от -1 до +1 относительно центра карточки
+                        const normX = (x / rect.width - 0.5) * 2;
+                        const normY = (y / rect.height - 0.5) * 2;
+
+                        // Горизонтальное покачивание влево-вправо (до ±5.5°) и деликатный вертикальный наклон (до ±3°)
+                        const rotateY = (normX * 5.5).toFixed(2);
+                        const rotateX = (-normY * 3).toFixed(2);
+
+                        card.style.setProperty('--mx', `${x.toFixed(0)}px`);
+                        card.style.setProperty('--my', `${y.toFixed(0)}px`);
+                        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+                    });
+
+                    card.addEventListener('mouseleave', () => {
+                        card.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease';
+                        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                    });
+                });
+            }
+
+            // Переключение фильтров
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => {
+                        b.classList.remove('active', 'bg-coral-500', 'text-white', 'shadow-lg', 'shadow-coral-500/20');
+                        b.classList.add('bg-graphite-900/90', 'text-slate-300', 'border', 'border-slate-700/80');
+                    });
+                    btn.classList.add('active', 'bg-coral-500', 'text-white', 'shadow-lg', 'shadow-coral-500/20');
+                    btn.classList.remove('bg-graphite-900/90', 'text-slate-300', 'border', 'border-slate-700/80');
+
+                    renderCases(btn.getAttribute('data-filter'));
+                });
+            });
+
+            // Первичный рендер и фоновое сканирование папки cases/
+            renderCases('all');
+            Promise.all(casesData.map(item => discoverCaseMedia(item))).then(() => {
+                renderCases(currentFilter);
+            });
+
+            /* -----------------------------------------------------------------
+               5. МОДАЛЬНОЕ ОКНО СО СЛАЙДЕРОМ И ПОЛНОЭКРАННЫМ ЛАЙТБОКСОМ
+            ------------------------------------------------------------------ */
+            const modal = document.getElementById('case-modal');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalFullscreenBtn = document.getElementById('modal-fullscreen-btn');
+            const modalPrevBtn = document.getElementById('modal-prev-btn');
+            const modalNextBtn = document.getElementById('modal-next-btn');
+            const modalDiscussBtn = document.getElementById('modal-discuss-btn');
+
+            const modalVisual = document.getElementById('modal-visual');
+            const slidePrevBtn = document.getElementById('slide-prev-btn');
+            const slideNextBtn = document.getElementById('slide-next-btn');
+            const slideHud = document.getElementById('slide-hud');
+            const slideFilename = document.getElementById('slide-filename');
+            const slideCounter = document.getElementById('slide-counter');
+            const modalThumbnails = document.getElementById('modal-thumbnails');
+
+            let currentModalIndex = 0;
+            let currentSlideIndex = 0;
+            let currentSlideList = [];
+
+            function updateSlideStage(item) {
+                const media = resolvedMediaMap.get(item.id) || { slides: [] };
+                currentSlideList = media.slides;
+
+                // Если в папке cases/case-XX/ ещё нет файлов для этого кейса
+                if (currentSlideList.length === 0) {
+                    modalVisual.innerHTML = getArchitecturalPlaceholderHTML(item, true);
+                    slidePrevBtn.classList.add('hidden');
+                    slideNextBtn.classList.add('hidden');
+                    slideHud.classList.add('hidden');
+                    modalThumbnails.classList.add('hidden');
+                    modalFullscreenBtn.classList.add('hidden');
+                    return;
+                }
+
+                // Есть реальные слайды или видео!
+                if (currentSlideIndex >= currentSlideList.length) currentSlideIndex = 0;
+                const activeSlide = currentSlideList[currentSlideIndex];
+
+                if (activeSlide.type === 'video') {
+                    modalVisual.innerHTML = `
+                        <video src="${activeSlide.src}" controls playsinline class="w-full h-full object-contain bg-black"></video>
+                    `;
+                    modalFullscreenBtn.classList.add('hidden');
+                } else {
+                    modalVisual.innerHTML = `
+                        <img 
+                            src="${activeSlide.src}" 
+                            alt="${item.title} — слайд ${currentSlideIndex + 1}" 
+                            id="active-modal-img"
+                            class="w-full h-full object-contain cursor-zoom-in transition-opacity duration-200"
+                            title="Нажмите, чтобы открыть на весь экран"
+                        >
+                    `;
+                    const activeImgEl = document.getElementById('active-modal-img');
+                    if (activeImgEl) {
+                        activeImgEl.addEventListener('click', () => openFullscreenLightbox());
+                    }
+                    modalFullscreenBtn.classList.remove('hidden');
+                }
+
+                slideHud.classList.remove('hidden');
+                slideFilename.textContent = activeSlide.src;
+                slideCounter.textContent = `${currentSlideIndex + 1} / ${currentSlideList.length}`;
+
+                if (currentSlideList.length > 1) {
+                    slidePrevBtn.classList.remove('hidden');
+                    slideNextBtn.classList.remove('hidden');
+                    modalThumbnails.classList.remove('hidden');
+
+                    modalThumbnails.innerHTML = currentSlideList.map((slide, idx) => `
+                        <button 
+                            type="button" 
+                            data-slide-idx="${idx}"
+                            class="thumb-btn shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${idx === currentSlideIndex ? 'border-coral-500 scale-105 shadow-lg shadow-coral-500/20' : 'border-slate-800 opacity-60 hover:opacity-100'}"
+                            aria-label="Показать слайд ${idx + 1}"
+                        >
+                            ${slide.type === 'video'
+                                ? `<div class="w-full h-full bg-graphite-900 flex flex-col items-center justify-center text-coral-400 font-mono text-[10px] gap-1"><i data-lucide="play-circle" class="w-5 h-5"></i><span>VIDEO</span></div>`
+                                : `<img src="${slide.src}" alt="Миниатюра ${idx + 1}" class="w-full h-full object-cover">`
+                            }
+                        </button>
+                    `).join('');
+
+                    if (window.lucide) {
+                        lucide.createIcons();
+                    }
+
+                    document.querySelectorAll('.thumb-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            currentSlideIndex = Number(btn.getAttribute('data-slide-idx'));
+                            updateSlideStage(item);
+                        });
+                    });
+                } else {
+                    slidePrevBtn.classList.add('hidden');
+                    slideNextBtn.classList.add('hidden');
+                    modalThumbnails.classList.add('hidden');
+                }
+            }
+
+            function populateModal(item) {
+                currentSlideIndex = 0;
+                document.getElementById('modal-case-num').textContent = item.num;
+                document.getElementById('modal-platform').textContent = `${item.platform} • ${item.year}`;
+                document.getElementById('modal-title').textContent = item.title;
+                document.getElementById('modal-subtitle').textContent = item.subtitle;
+                document.getElementById('modal-task').textContent = item.task;
+                document.getElementById('modal-insight').textContent = item.insight;
+
+                document.getElementById('modal-facts').innerHTML = item.facts.map(f => `
+                    <li class="flex items-start gap-2">
+                        <span class="text-coral-400 font-bold mt-0.5">&bull;</span>
+                        <span>${f}</span>
+                    </li>
+                `).join('');
+
+                document.getElementById('modal-solutions').innerHTML = item.solutions.map(s => `
+                    <li class="flex items-start gap-2.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-steel-400 mt-2 shrink-0"></span>
+                        <span>${s}</span>
+                    </li>
+                `).join('');
+
+                updateSlideStage(item);
+            }
+
+            function openCaseModalById(id) {
+                const idx = casesData.findIndex(c => c.id === id);
+                if (idx === -1) return;
+                currentModalIndex = idx;
+                populateModal(casesData[currentModalIndex]);
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeCaseModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            slidePrevBtn.addEventListener('click', () => {
+                if (currentSlideList.length <= 1) return;
+                currentSlideIndex = (currentSlideIndex - 1 + currentSlideList.length) % currentSlideList.length;
+                updateSlideStage(casesData[currentModalIndex]);
+            });
+
+            slideNextBtn.addEventListener('click', () => {
+                if (currentSlideList.length <= 1) return;
+                currentSlideIndex = (currentSlideIndex + 1) % currentSlideList.length;
+                updateSlideStage(casesData[currentModalIndex]);
+            });
+
+            modalCloseBtn.addEventListener('click', closeCaseModal);
+            modalDiscussBtn.addEventListener('click', closeCaseModal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeCaseModal();
+            });
+
+            modalPrevBtn.addEventListener('click', () => {
+                currentModalIndex = (currentModalIndex - 1 + casesData.length) % casesData.length;
+                populateModal(casesData[currentModalIndex]);
+            });
+
+            modalNextBtn.addEventListener('click', () => {
+                currentModalIndex = (currentModalIndex + 1) % casesData.length;
+                populateModal(casesData[currentModalIndex]);
+            });
+
+            /* -----------------------------------------------------------------
+               6. ПОЛНОЭКРАННЫЙ ЛАЙТБОКС И ЛУПА (ZOOM)
+            ------------------------------------------------------------------ */
+            const lightbox = document.getElementById('fullscreen-lightbox');
+            const lbImage = document.getElementById('lb-image');
+            const lbTitle = document.getElementById('lb-title');
+            const lbCounter = document.getElementById('lb-counter');
+            const lbCloseBtn = document.getElementById('lb-close-btn');
+            const lbPrevBtn = document.getElementById('lb-prev-btn');
+            const lbNextBtn = document.getElementById('lb-next-btn');
+            const lbZoomBtn = document.getElementById('lb-zoom-btn');
+            const lbZoomLabel = document.getElementById('lb-zoom-label');
+            let isZoomed = false;
+
+            function setZoomState(zoomed) {
+                isZoomed = zoomed;
+                if (isZoomed) {
+                    lbImage.style.transform = 'scale(1.65)';
+                    lbImage.style.cursor = 'zoom-out';
+                    lbZoomLabel.textContent = 'Сбросить (165%)';
+                } else {
+                    lbImage.style.transform = 'scale(1)';
+                    lbImage.style.cursor = 'zoom-in';
+                    lbZoomLabel.textContent = 'Увеличить (100%)';
+                }
+            }
+
+            function renderLightboxSlide() {
+                if (!currentSlideList.length) return;
+                const activeSlide = currentSlideList[currentSlideIndex];
+                if (activeSlide.type !== 'image') return;
+                const item = casesData[currentModalIndex];
+                lbImage.src = activeSlide.src;
+                lbTitle.textContent = `${item.num} — ${item.title}`;
+                lbCounter.textContent = `${currentSlideIndex + 1} / ${currentSlideList.length}`;
+                setZoomState(false);
+
+                if (currentSlideList.length > 1) {
+                    lbPrevBtn.classList.remove('hidden');
+                    lbNextBtn.classList.remove('hidden');
+                } else {
+                    lbPrevBtn.classList.add('hidden');
+                    lbNextBtn.classList.add('hidden');
+                }
+            }
+
+            function openFullscreenLightbox() {
+                if (!currentSlideList.length) return;
+                const activeSlide = currentSlideList[currentSlideIndex];
+                if (!activeSlide || activeSlide.type !== 'image') return;
+                renderLightboxSlide();
+                lightbox.classList.add('active');
+            }
+
+            function closeFullscreenLightbox() {
+                lightbox.classList.remove('active');
+                setZoomState(false);
+            }
+
+            modalFullscreenBtn.addEventListener('click', openFullscreenLightbox);
+            lbCloseBtn.addEventListener('click', closeFullscreenLightbox);
+            lbZoomBtn.addEventListener('click', () => setZoomState(!isZoomed));
+            lbImage.addEventListener('click', () => setZoomState(!isZoomed));
+
+            lbPrevBtn.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex - 1 + currentSlideList.length) % currentSlideList.length;
+                updateSlideStage(casesData[currentModalIndex]);
+                renderLightboxSlide();
+            });
+
+            lbNextBtn.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex + 1) % currentSlideList.length;
+                updateSlideStage(casesData[currentModalIndex]);
+                renderLightboxSlide();
+            });
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox || e.target === document.getElementById('lb-stage')) {
+                    closeFullscreenLightbox();
+                }
+            });
+
+            // Клавиатурная навигация (Escape, Стрелки)
+            document.addEventListener('keydown', (e) => {
+                if (lightbox.classList.contains('active')) {
+                    if (e.key === 'Escape') closeFullscreenLightbox();
+                    if (e.key === 'ArrowLeft' && currentSlideList.length > 1) lbPrevBtn.click();
+                    if (e.key === 'ArrowRight' && currentSlideList.length > 1) lbNextBtn.click();
+                    return;
+                }
+                if (!modal.classList.contains('active')) return;
+                if (e.key === 'Escape') closeCaseModal();
+                if (e.key === 'ArrowLeft') {
+                    if (currentSlideList.length > 1) slidePrevBtn.click();
+                    else modalPrevBtn.click();
+                }
+                if (e.key === 'ArrowRight') {
+                    if (currentSlideList.length > 1) slideNextBtn.click();
+                    else modalNextBtn.click();
+                }
+            });
+
+            /* -----------------------------------------------------------------
+               7. КОПИРОВАНИЕ EMAIL, TOAST И ФОРМА ОБРАТНОЙ СВЯЗИ
+            ------------------------------------------------------------------ */
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            let toastTimer = null;
+
+            function showToast(msg) {
+                toastMessage.textContent = msg;
+                toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                }, 3200);
+            }
+
+            function copyTextFallback(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    return false;
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            }
+
+            const copyEmailBtn = document.getElementById('copy-email-btn');
+            copyEmailBtn.addEventListener('click', () => {
+                const email = copyEmailBtn.getAttribute('data-email');
+                if (copyTextFallback(email)) {
+                    showToast(`Email ${email} скопирован в буфер обмена`);
+                }
+            });
+
+            // Интерактивная форма заявки
+            const contactForm = document.getElementById('contact-form');
+            const formSuccessBox = document.getElementById('form-success-box');
+            const copyPayloadBtn = document.getElementById('copy-payload-btn');
+            const prepareTgBtn = document.getElementById('prepare-tg-btn');
+            const directTgLink = document.getElementById('direct-tg-link');
+            let lastFormattedPayload = '';
+
+            function buildRequestMessage() {
+                const name = document.getElementById('client-name').value.trim() || 'Клиент';
+                const contact = document.getElementById('client-contact').value.trim() || 'не указан';
+                const type = document.getElementById('project-type').value;
+                const task = document.getElementById('project-task').value.trim() || 'Хочу обсудить проект';
+                return `Здравствуйте, Павел! Пишу с сайта-портфолио.\n• Имя: ${name}\n• Контакт: ${contact}\n• Направление: ${type}\n• Задача: ${task}`;
+            }
+
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                lastFormattedPayload = buildRequestMessage();
+                const encoded = encodeURIComponent(lastFormattedPayload);
+                directTgLink.href = `https://t.me/your_telegram?text=${encoded}`;
+
+                formSuccessBox.classList.remove('hidden');
+                copyTextFallback(lastFormattedPayload);
+                showToast('Заявка сформирована и скопирована в буфер обмена');
+            });
+
+            prepareTgBtn.addEventListener('click', () => {
+                lastFormattedPayload = buildRequestMessage();
+                copyTextFallback(lastFormattedPayload);
+                showToast('Текст заявки скопирован — вставьте его в Telegram');
+            });
+
+            copyPayloadBtn.addEventListener('click', () => {
+                if (lastFormattedPayload && copyTextFallback(lastFormattedPayload)) {
+                    showToast('Текст заявки скопирован');
+                }
+            });
+
+            /* -----------------------------------------------------------------
+               6. МОБИЛЬНОЕ МЕНЮ, ИНДИКАТОР ПРОКРУТКИ И INTERSECTION OBSERVER
+            ------------------------------------------------------------------ */
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Индикатор прокрутки в шапке
+            const scrollBar = document.getElementById('scroll-progress-bar');
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const pct = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+                scrollBar.style.width = `${pct}%`;
+            }, { passive: true });
+
+            // Плавное появление секций (IntersectionObserver)
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const revealElements = document.querySelectorAll('.reveal');
+
+            if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                revealElements.forEach(el => observer.observe(el));
+            } else {
+                revealElements.forEach(el => el.classList.add('is-visible'));
+            }
+
+            /* -----------------------------------------------------------------
+               7. ФОНОВАЯ CANVAS-МИКРОАНИМАЦИЯ В СТИЛЕ ОБЛОЖКИ PDF
+                  (Нейросетевые узлы + оранжевая траектория роста данных)
+            ------------------------------------------------------------------ */
+            const canvas = document.getElementById('bg-network-canvas');
+            const ctx = canvas.getContext('2d');
+            let width = 0;
+            let height = 0;
+            let nodes = [];
+            const mouse = { x: -1000, y: -1000 };
+
+            function resizeCanvas() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                initNodes();
+            }
+
+            function initNodes() {
+                const count = Math.min(48, Math.floor((width * height) / 28000));
+                nodes = [];
+                for (let i = 0; i < count; i++) {
+                    nodes.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.35,
+                        vy: (Math.random() - 0.5) * 0.35,
+                        r: Math.random() * 1.6 + 1,
+                        isAccent: i % 6 === 0
+                    });
+                }
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            }, { passive: true });
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function drawFrame(time = 0) {
+                ctx.clearRect(0, 0, width, height);
+
+                // Оранжевая траектория роста данных в правой части экрана (отсылка к обложке PDF)
+                ctx.save();
+                ctx.beginPath();
+                const startX = width * 0.55;
+                const baseY = height * 0.72;
+                const steps = 6;
+                for (let s = 0; s <= steps; s++) {
+                    const px = startX + (width * 0.42) * (s / steps);
+                    const wave = Math.sin(time * 0.001 + s * 1.3) * 8;
+                    const py = baseY - (s * s * 9) + wave;
+                    if (s === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.strokeStyle = 'rgba(249, 115, 22, 0.16)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+
+                // Узлы и связи нейросети
+                for (let i = 0; i < nodes.length; i++) {
+                    const n = nodes[i];
+                    if (!prefersReducedMotion) {
+                        n.x += n.vx;
+                        n.y += n.vy;
+                        if (n.x < 0 || n.x > width) n.vx *= -1;
+                        if (n.y < 0 || n.y > height) n.vy *= -1;
+                    }
+
+                    // Связь с курсором
+                    const dxm = n.x - mouse.x;
+                    const dym = n.y - mouse.y;
+                    const distMouse = Math.hypot(dxm, dym);
+                    if (distMouse < 160) {
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.strokeStyle = `rgba(249, 115, 22, ${(1 - distMouse / 160) * 0.25})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+
+                    // Связи между ближайшими узлами
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const m = nodes[j];
+                        const dist = Math.hypot(n.x - m.x, n.y - m.y);
+                        if (dist < 135) {
+                            ctx.beginPath();
+                            ctx.moveTo(n.x, n.y);
+                            ctx.lineTo(m.x, m.y);
+                            ctx.strokeStyle = `rgba(56, 189, 248, ${(1 - dist / 135) * 0.11})`;
+                            ctx.lineWidth = 0.8;
+                            ctx.stroke();
+                        }
+                    }
+
+                    // Отрисовка точки
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                    ctx.fillStyle = n.isAccent ? 'rgba(249, 115, 22, 0.55)' : 'rgba(148, 163, 184, 0.35)';
+                    ctx.fill();
+                }
+
+                if (!prefersReducedMotion) {
+                    requestAnimationFrame(drawFrame);
+                }
+            }
+
+            drawFrame();
+        });
+    </script>
+</body>
+</html>
