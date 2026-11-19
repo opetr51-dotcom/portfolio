@@ -14,7 +14,8 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
@@ -148,6 +149,16 @@
             }
         }
 
+        /* Отключение залипания hover-эффектов на сенсорных экранах */
+        @media (hover: none) {
+            .glass-card-hover:hover {
+                transform: none !important;
+            }
+            .glass-card-hover::after {
+                display: none;
+            }
+        }
+
         /* Анимация модального окна */
         .modal-backdrop {
             opacity: 0;
@@ -219,7 +230,7 @@
             <!-- Навигация (Desktop) -->
             <nav class="hidden md:flex items-center gap-1 lg:gap-2 bg-graphite-900/70 p-1.5 rounded-2xl border border-slate-800/80">
                 <a href="#about" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Обо мне</a>
-                <a href="#cases" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Кейсы (12)</a>
+                <a href="#cases" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Кейсы (13)</a>
                 <a href="#services" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Подход и услуги</a>
                 <a href="#contacts" class="px-3.5 py-1.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">Контакты</a>
             </nav>
@@ -241,7 +252,7 @@
         <!-- Мобильное выпадающее меню -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-graphite-950/95 px-4 py-4 space-y-2">
             <a href="#about" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Обо мне и стек</a>
-            <a href="#cases" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Избранные кейсы (12)</a>
+            <a href="#cases" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Избранные кейсы (13)</a>
             <a href="#services" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Подход и услуги</a>
             <a href="#contacts" class="mobile-link block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-200 hover:bg-slate-800/80">Контакты и заявка</a>
         </div>
@@ -319,9 +330,29 @@
                             <span>Смотреть кейсы</span>
                             <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
                         </a>
+                        <a href="#" data-cloud-link="videoShowreel" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700/90 border border-coral-500/40 text-white font-semibold text-sm sm:text-base transition-all active:scale-95">
+                            <i data-lucide="play-circle" class="w-5 h-5 text-coral-400"></i>
+                            <span>Видеопрезентация</span>
+                        </a>
                         <a href="#contacts" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-600/70 text-white font-semibold text-sm sm:text-base transition-all active:scale-95">
                             <i data-lucide="message-square" class="w-4 h-4 text-steel-400"></i>
                             <span>Обсудить проект</span>
+                        </a>
+                    </div>
+
+                    <!-- Быстрые ссылки на облачные материалы (PDF-портфолио и Резюме) -->
+                    <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-400">
+                        <span class="font-mono text-[11px] uppercase tracking-wider text-slate-500">Материалы в облаке:</span>
+                        <a href="#" data-cloud-link="portfolioPdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-slate-200 hover:text-coral-400 font-medium transition-colors">
+                            <i data-lucide="file-text" class="w-4 h-4 text-coral-400"></i>
+                            <span>Портфолио (PDF)</span>
+                            <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
+                        </a>
+                        <span class="text-slate-700">&bull;</span>
+                        <a href="#" data-cloud-link="resumePdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-slate-200 hover:text-steel-400 font-medium transition-colors">
+                            <i data-lucide="file-badge" class="w-4 h-4 text-steel-400"></i>
+                            <span>Резюме (CV)</span>
+                            <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
                         </a>
                     </div>
                 </div>
@@ -414,119 +445,50 @@
                             «Я говорю на одном языке с заказчиком, потому что сам когда-то сидел по другую сторону стола»
                         </p>
                     </blockquote>
-                </div>
 
-                <!-- Правая колонка: Текст о подходе + 4 карточки компетенций -->
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="rounded-3xl glass-card p-6 sm:p-8 space-y-4 text-slate-200 text-base sm:text-[17px] leading-relaxed">
-                        <p>
-                            Более 5 лет создаю визуальные коммуникации полного цикла: от полиграфии и инфографики до видеомонтажа и моушн-дизайна. Не просто «рисую картинки», а решаю бизнес-задачи: структурирую сложные данные, выстраиваю визуальную логику и говорю на одном языке с заказчиком.
-                        </p>
-                        <p>
-                            Один из первых в своей среде внедрил нейросети в рабочий процесс — использую ИИ как инструмент генерации идей и референсов, сохраняя авторский контроль над финальным результатом.
-                        </p>
-                        <p class="text-slate-300">
-                            В прошлом — руководитель и инженер-оптимизатор. Этот бэкграунд позволяет мне видеть дизайн не как эстетику, а как систему: от сбора данных до финального результата.
-                        </p>
-                    </div>
-
-                    <!-- 4 карточки компетенций (точно по структуре PDF-портфолио) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Карточка 1: Дизайн -->
-                        <div class="rounded-2xl glass-card glass-card-hover p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-xl bg-coral-500/15 border border-coral-500/30 flex items-center justify-center text-coral-400">
-                                    <i data-lucide="pen-tool" class="w-5 h-5"></i>
-                                </div>
-                                <h3 class="font-bold text-lg text-white">Дизайн</h3>
-                            </div>
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span><strong class="text-white">Affinity:</strong> Designer, Photo, Publisher</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span><strong class="text-white">Adobe CC:</strong> Photoshop, Illustrator, InDesign, After Effects, Premiere Pro</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span>Полиграфия, инфографика, корпоративные презентации</span>
-                                </li>
-                            </ul>
+                    <!-- Блок внешних ссылок на облако: Резюме, PDF-портфолио и Видеопрезентация -->
+                    <div class="rounded-3xl glass-card p-5 border border-slate-700/60 space-y-2.5">
+                        <div class="font-mono text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                            Документы и видео (облако)
                         </div>
+                        <a href="#" data-cloud-link="resumePdf" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-2xl bg-graphite-950/80 hover:bg-slate-800/90 border border-slate-800 hover:border-steel-400/40 transition-all group">
+                            <span class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-xl bg-steel-400/15 text-steel-400 flex items-center justify-center">
+                                    <i data-lucide="file-user" class="w-4 h-4"></i>
+                                </span>
+                                <span>
+                                    <span class="block text-sm font-bold text-white group-hover:text-steel-400 transition-colors">Резюме Павла Перова</span>
+                                    <span class="block text-[11px] text-slate-400">Опыт, навыки и стек • Открыть PDF</span>
+                                </span>
+                            </span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-steel-400 transition-colors"></i>
+                        </a>
 
-                        <!-- Карточка 2: ИИ-инструменты -->
-                        <div class="rounded-2xl glass-card glass-card-hover p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-xl bg-steel-400/15 border border-steel-400/30 flex items-center justify-center text-steel-400">
-                                    <i data-lucide="cpu" class="w-5 h-5"></i>
-                                </div>
-                                <h3 class="font-bold text-lg text-white">ИИ-инструменты</h3>
-                            </div>
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Генерация изображений и видео (Qwen, Gemini, ChatGPT, Flow, Midjourney)</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Промпт-инжиниринг и автоматизация рабочих процессов</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Нейросетевая обработка и реставрация архивных фото</span>
-                                </li>
-                            </ul>
-                        </div>
+                        <a href="#" data-cloud-link="portfolioPdf" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-2xl bg-graphite-950/80 hover:bg-slate-800/90 border border-slate-800 hover:border-coral-500/40 transition-all group">
+                            <span class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-xl bg-coral-500/15 text-coral-400 flex items-center justify-center">
+                                    <i data-lucide="book-open-check" class="w-4 h-4"></i>
+                                </span>
+                                <span>
+                                    <span class="block text-sm font-bold text-white group-hover:text-coral-400 transition-colors">Полное портфолио в PDF</span>
+                                    <span class="block text-[11px] text-slate-400">Версия для скачивания и печати</span>
+                                </span>
+                            </span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-coral-400 transition-colors"></i>
+                        </a>
 
-                        <!-- Карточка 3: Управление и аналитика -->
-                        <div class="rounded-2xl glass-card glass-card-hover p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-xl bg-steel-400/15 border border-steel-400/30 flex items-center justify-center text-steel-400">
-                                    <i data-lucide="network" class="w-5 h-5"></i>
-                                </div>
-                                <h3 class="font-bold text-lg text-white">Управление и аналитика</h3>
-                            </div>
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Оптимизация рабочих процессов и поиск узких мест</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Работа с большими массивами данных и отчётностью</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-steel-400 mt-1">&bull;</span>
-                                    <span>Стратегическое планирование и фокус на бизнес-задаче</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- Карточка 4: Личные качества -->
-                        <div class="rounded-2xl glass-card glass-card-hover p-6">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-xl bg-coral-500/15 border border-coral-500/30 flex items-center justify-center text-coral-400">
-                                    <i data-lucide="shield-check" class="w-5 h-5"></i>
-                                </div>
-                                <h3 class="font-bold text-lg text-white">Личные качества</h3>
-                            </div>
-                            <ul class="space-y-2 text-sm text-slate-300">
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span>Системное мышление и самоорганизация (5 лет удалённой работы)</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span>Железная дисциплина (регулярный бег 10–12 км и силовые тренировки)</span>
-                                </li>
-                                <li class="flex items-start gap-2">
-                                    <span class="text-coral-400 mt-1">&bull;</span>
-                                    <span class="text-white font-medium">«Прихожу в проект вовремя и с кофе»</span>
-                                </li>
-                            </ul>
-                        </div>
+                        <a href="#" data-cloud-link="videoShowreel" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-2xl bg-graphite-950/80 hover:bg-slate-800/90 border border-slate-800 hover:border-coral-500/40 transition-all group">
+                            <span class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-xl bg-coral-500/15 text-coral-400 flex items-center justify-center">
+                                    <i data-lucide="film" class="w-4 h-4"></i>
+                                </span>
+                                <span>
+                                    <span class="block text-sm font-bold text-white group-hover:text-coral-400 transition-colors">Видеопрезентация и анимация</span>
+                                    <span class="block text-[11px] text-slate-400">Шоурил графиков и ИИ-видео в облаке</span>
+                                </span>
+                            </span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400 group-hover:text-coral-400 transition-colors"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -547,21 +509,21 @@
                     </p>
                 </div>
 
-                <!-- Фильтр категорий -->
-                <div id="case-filters" class="flex flex-wrap gap-2" role="tablist" aria-label="Фильтр проектов по категориям">
-                    <button type="button" data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-coral-500 text-white shadow-lg shadow-coral-500/20 transition-all">
-                        Все (12)
+                <!-- Фильтр категорий (на мобильных — плавная горизонтальная лента, на планшетах и ПК — перенос) -->
+                <div id="case-filters" class="flex overflow-x-auto no-scrollbar sm:flex-wrap gap-2 -mx-4 px-4 sm:mx-0 sm:px-0 pb-1" role="tablist" aria-label="Фильтр проектов по категориям">
+                    <button type="button" data-filter="all" class="filter-btn active shrink-0 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-coral-500 text-white shadow-lg shadow-coral-500/20 transition-all">
+                        Все (13)
                     </button>
-                    <button type="button" data-filter="stats-media" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                    <button type="button" data-filter="stats-media" class="filter-btn shrink-0 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
                         Статистика и медиа
                     </button>
-                    <button type="button" data-filter="books-calendars" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                    <button type="button" data-filter="books-calendars" class="filter-btn shrink-0 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
                         Сборники и календари
                     </button>
-                    <button type="button" data-filter="presentations-video" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                    <button type="button" data-filter="presentations-video" class="filter-btn shrink-0 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
                         Презентации и видео
                     </button>
-                    <button type="button" data-filter="graphics-posters" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
+                    <button type="button" data-filter="graphics-posters" class="filter-btn shrink-0 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-graphite-900/90 text-slate-300 border border-slate-700/80 hover:border-slate-500 transition-all">
                         Графика и постеры
                     </button>
                 </div>
@@ -656,68 +618,126 @@
         </section>
 
         <!-- =====================================================================
-             6. ФИНАЛЬНЫЙ БЛОК И КОНТАКТЫ
+             6. ФИНАЛЬНЫЙ БЛОК И КОНТАКТЫ (В СТИЛЕ ЗАКЛЮЧИТЕЛЬНОГО СЛАЙДА ПОРТФОЛИО)
         ====================================================================== -->
         <section id="contacts" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24 reveal">
             <div class="rounded-3xl glass-card p-6 sm:p-10 lg:p-14 border border-slate-700/70 relative overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
-                    <!-- Левая часть: Призыв и прямые контакты -->
-                    <div class="lg:col-span-6 space-y-6">
-                        <span class="font-mono text-xs uppercase tracking-widest text-coral-400">04 // КОНТАКТЫ И СТАРТ ПРОЕКТА</span>
-                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-                            Портфолио закончилось.<br>
-                            <span class="text-coral-400">Начинается ваш проект.</span>
-                        </h2>
-                        <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
-                            Дизайн — это не украшение данных. Это способ сделать сложное понятным, а понятное запоминающимся. Если ваш проект требует структуры, визуальной логики и автора, который говорит на языке бизнеса — напишите мне.
-                        </p>
+                <!-- Декоративная сетка на фоне финального блока -->
+                <div class="pointer-events-none absolute inset-0 bg-data-grid opacity-60" aria-hidden="true"></div>
 
-                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-graphite-950/90 border border-slate-800 text-xs sm:text-sm text-slate-200">
-                            <i data-lucide="coffee" class="w-4 h-4 text-coral-400"></i>
-                            <span>Отвечаю в течение рабочего дня. P.S. Прихожу в проект вовремя и с кофе.</span>
+                <div class="relative z-10 space-y-10">
+                    <!-- Верхняя полоса в стиле слайда 20: Красный круг P.P. PaPer + главный слоган -->
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-7">
+                        <div class="flex flex-col items-center shrink-0 self-start sm:self-auto">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#E11D1D] flex items-center justify-center shadow-lg shadow-red-600/30 border border-red-400/30">
+                                <span class="font-serif italic font-black text-white text-xl sm:text-2xl tracking-tight">P.P.</span>
+                            </div>
+                            <span class="mt-1 font-serif italic font-extrabold text-[#E11D1D] text-base sm:text-lg tracking-wide leading-none">
+                                PaPer
+                            </span>
                         </div>
 
-                        <!-- Кнопки быстрой связи -->
-                        <div class="pt-2 space-y-3">
-                            <a href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-between sm:justify-start gap-4 px-5 py-3.5 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-coral-500/25 transition-all">
-                                <span class="flex items-center gap-2.5">
-                                    <i data-lucide="send" class="w-5 h-5"></i>
-                                    <span>Telegram: @your_telegram</span>
-                                </span>
-                                <i data-lucide="external-link" class="w-4 h-4 opacity-80"></i>
-                            </a>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-light italic text-white leading-snug tracking-tight">
+                            Автор этого портфолио. И, <span class="text-coral-400 font-normal">надеюсь</span>, вашего следующего проекта.
+                        </h2>
+                    </div>
 
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button id="copy-email-btn" type="button" data-email="email@yourdomain.com" class="inline-flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-graphite-950/90 hover:bg-slate-800 border border-slate-700/80 text-sm font-mono text-slate-200 transition-colors">
-                                    <span class="flex items-center gap-2">
-                                        <i data-lucide="mail" class="w-4 h-4 text-steel-400"></i>
-                                        <span>email@yourdomain.com</span>
-                                    </span>
-                                    <span class="text-[11px] text-coral-400 underline">Копировать</span>
-                                </button>
+                    <!-- Основная композиция слайда: слева контакты с оранжевыми точками, справа фото на дроне с кофе -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                        <!-- Левая колонка: 3 строки контактов с фирменными коралловыми кружками -->
+                        <div class="lg:col-span-7 space-y-5">
+                            <ul class="space-y-4 sm:space-y-5">
+                                <li>
+                                    <button id="copy-email-btn" type="button" data-email="email@yourdomain.com" class="group flex items-center gap-4 text-left focus:outline-none">
+                                        <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-coral-500 shrink-0 shadow-md shadow-coral-500/40 group-hover:scale-110 transition-transform"></span>
+                                        <span class="font-mono text-lg sm:text-2xl lg:text-[26px] font-bold text-white group-hover:text-coral-400 transition-colors break-all">
+                                            email@yourdomain.com
+                                        </span>
+                                        <span class="hidden sm:inline-block font-mono text-[11px] text-slate-400 group-hover:text-coral-400 border border-slate-700/80 px-2 py-0.5 rounded-lg">
+                                            копировать
+                                        </span>
+                                    </button>
+                                </li>
 
-                                <a href="tel:+70000000000" class="inline-flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-graphite-950/90 hover:bg-slate-800 border border-slate-700/80 text-sm font-mono text-slate-200 transition-colors">
-                                    <i data-lucide="phone" class="w-4 h-4 text-coral-400"></i>
-                                    <span>+7 (XXX) XXX-XX-XX</span>
-                                </a>
+                                <li>
+                                    <a href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-4">
+                                        <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-coral-500 shrink-0 shadow-md shadow-coral-500/40 group-hover:scale-110 transition-transform"></span>
+                                        <span class="font-mono text-lg sm:text-2xl lg:text-[26px] font-bold text-white group-hover:text-coral-400 transition-colors">
+                                            @your_telegram
+                                        </span>
+                                        <i data-lucide="external-link" class="w-4 h-4 text-slate-400 group-hover:text-coral-400 transition-colors"></i>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="tel:+70000000000" class="group flex items-center gap-4">
+                                        <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-coral-500 shrink-0 shadow-md shadow-coral-500/40 group-hover:scale-110 transition-transform"></span>
+                                        <span class="font-mono text-lg sm:text-2xl lg:text-[26px] font-bold text-white group-hover:text-coral-400 transition-colors">
+                                            +7 (XXX) XXX-XX-XX
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <p class="pt-2 text-xs sm:text-sm text-slate-400 max-w-xl leading-relaxed">
+                                Отвечаю в течение рабочего дня. Готов подключиться к задаче удалённо: от разовой презентации или серии инфографики до постоянного сопровождения контента.
+                            </p>
+                        </div>
+
+                        <!-- Правая колонка: Фото автора на дроне с кофе (drone.jpg) + постскриптум -->
+                        <div class="lg:col-span-5 flex flex-col items-center lg:items-end">
+                            <div class="w-full max-w-[340px] rounded-2xl overflow-hidden border border-slate-700/80 bg-graphite-950 shadow-2xl group">
+                                <div class="relative aspect-[16/11] w-full overflow-hidden bg-graphite-900">
+                                    <img 
+                                        src="drone.jpg" 
+                                        alt="Павел Перов на дроне с кофе — P.S. Прихожу в проект вовремя и с кофе" 
+                                        class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                                        onerror="this.style.display='none'; document.getElementById('drone-fallback').classList.remove('hidden');"
+                                    >
+                                    <!-- Заглушка, пока файл drone.jpg не положен в папку сайта -->
+                                    <div id="drone-fallback" class="hidden w-full h-full p-4 flex flex-col items-center justify-center text-center bg-gradient-to-br from-graphite-850 to-graphite-950">
+                                        <i data-lucide="coffee" class="w-8 h-8 text-coral-400 mb-2"></i>
+                                        <span class="font-mono text-xs text-slate-200 font-semibold">Фото на дроне с кофе</span>
+                                        <span class="mt-1 font-mono text-[10px] text-slate-400">
+                                            Сохраните фото как <code class="text-coral-400">drone.jpg</code> рядом с <code class="text-steel-400">index.html</code>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
+
+                            <p class="mt-4 text-base sm:text-xl italic font-light text-slate-100 text-center lg:text-right">
+                                P.S. Прихожу в проект вовремя и с кофе.
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Правая часть: Интерактивная форма заявки -->
-                    <div class="lg:col-span-6">
-                        <form id="contact-form" class="rounded-3xl bg-graphite-950/85 border border-slate-800 p-6 sm:p-8 space-y-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <h3 class="text-lg sm:text-xl font-bold text-white">Быстрая заявка на проект</h3>
-                                <span class="font-mono text-[11px] text-slate-400">Удалённо / Полный день</span>
-                            </div>
+                    <!-- Фирменная коралловая линия и номер слайда 20 внизу -->
+                    <div class="pt-2 space-y-2.5">
+                        <div class="h-[3px] w-full rounded-full bg-gradient-to-r from-coral-500 via-coral-500 to-coral-400"></div>
+                        <div class="flex items-center justify-between font-mono text-xs sm:text-sm">
+                            <span class="text-slate-500">Ростов-на-Дону &bull; Удалённая работа</span>
+                            <span class="text-coral-400 font-bold">20</span>
+                        </div>
+                    </div>
 
-                            <div>
-                                <label for="client-name" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Как к вам обращаться</label>
-                                <input id="client-name" name="name" type="text" required placeholder="Например, Алексей" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors">
-                            </div>
+                    <!-- Сворачиваемая/аккуратная быстрая форма заявки прямо под слайдом -->
+                    <details class="group rounded-2xl bg-graphite-950/75 border border-slate-800/90 overflow-hidden">
+                        <summary class="list-none cursor-pointer px-5 sm:px-6 py-4 flex items-center justify-between text-sm sm:text-base font-bold text-white hover:bg-slate-800/40 transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="send" class="w-4 h-4 text-coral-400"></i>
+                                <span>Или оставить быструю заявку прямо здесь</span>
+                            </span>
+                            <span class="font-mono text-xs text-coral-400 group-open:rotate-180 transition-transform">
+                                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                            </span>
+                        </summary>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <form id="contact-form" class="px-5 sm:px-6 pb-6 pt-3 border-t border-slate-800/80 space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="client-name" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Как к вам обращаться</label>
+                                    <input id="client-name" name="name" type="text" required placeholder="Например, Алексей" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors">
+                                </div>
                                 <div>
                                     <label for="client-contact" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Telegram или Email</label>
                                     <input id="client-contact" name="contact" type="text" required placeholder="@username или почта" class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors">
@@ -736,15 +756,15 @@
 
                             <div>
                                 <label for="project-task" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Кратко о задаче и сроках</label>
-                                <textarea id="project-task" name="task" rows="3" placeholder="Опишите исходные данные, формат результата или желаемый дедлайн..." class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors resize-none"></textarea>
+                                <textarea id="project-task" name="task" rows="2" placeholder="Опишите исходные данные, формат результата или желаемый дедлайн..." class="w-full px-4 py-3 rounded-xl bg-graphite-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-coral-500 transition-colors resize-none"></textarea>
                             </div>
 
-                            <div class="pt-2 flex flex-col sm:flex-row gap-3">
-                                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm shadow-lg shadow-coral-500/20 transition-all active:scale-95">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-coral-500 hover:bg-coral-600 text-white font-bold text-sm shadow-lg shadow-coral-500/20 transition-all active:scale-95">
                                     <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                                     <span>Сформировать заявку</span>
                                 </button>
-                                <button id="prepare-tg-btn" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-colors">
+                                <button id="prepare-tg-btn" type="button" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-colors">
                                     <i data-lucide="copy" class="w-4 h-4 text-steel-400"></i>
                                     <span>Скопировать текст</span>
                                 </button>
@@ -757,7 +777,7 @@
                                     <span>Заявка готова к отправке!</span>
                                 </div>
                                 <p class="text-slate-300">
-                                    Поскольку сайт размещён как статическая страница, текст заявки сформирован и скопирован. Нажмите кнопку ниже, чтобы сразу отправить его в Telegram:
+                                    Текст заявки сформирован и скопирован. Нажмите кнопку ниже, чтобы сразу отправить его в Telegram:
                                 </p>
                                 <div class="flex flex-wrap gap-2 pt-1">
                                     <a id="direct-tg-link" href="https://t.me/your_telegram" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors">
@@ -770,7 +790,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </details>
                 </div>
             </div>
         </section>
@@ -796,9 +816,9 @@
          МОДАЛЬНОЕ ОКНО ПОДРОБНОГО РАЗБОРА КЕЙСА СО СЛАЙДЕРОМ РАБОТ
     ====================================================================== -->
     <div id="case-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-graphite-950/85 backdrop-blur-md">
-        <div class="modal-panel relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-3xl bg-graphite-900 border border-slate-700/80 shadow-2xl">
+        <div class="modal-panel relative w-full max-w-5xl max-h-[92dvh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-graphite-900 border border-slate-700/80 shadow-2xl">
             <!-- Верхняя панель модалки -->
-            <div class="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-4 bg-graphite-900/95 backdrop-blur-md border-b border-slate-800">
+            <div class="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-4 bg-graphite-900/95 backdrop-blur-md border-b border-slate-800">
                 <div class="flex items-center gap-3 min-w-0">
                     <span id="modal-case-num" class="shrink-0 font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-coral-500/15 text-coral-400 border border-coral-500/30">КЕЙС 01</span>
                     <span id="modal-platform" class="font-mono text-xs text-slate-400 truncate">ВКонтакте / Ростовстат</span>
@@ -808,7 +828,7 @@
                         <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-coral-400"></i>
                         <span class="hidden sm:inline">На весь экран</span>
                     </button>
-                    <button id="modal-close-btn" type="button" aria-label="Закрыть окно" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
+                    <button id="modal-close-btn" type="button" aria-label="Закрыть окно" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -817,8 +837,8 @@
             <!-- Контент модального окна -->
             <div class="p-4 sm:p-8 space-y-6">
                 <!-- Интерактивный просмотрщик слайдов / видео / архитектурной заглушки -->
-                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-graphite-950 relative">
-                    <div id="modal-visual" class="w-full h-64 sm:h-80 md:h-[420px] relative flex items-center justify-center overflow-hidden">
+                <div class="rounded-2xl overflow-hidden border border-slate-800 bg-graphite-950 relative touch-pan-y">
+                    <div id="modal-visual" class="w-full h-60 sm:h-80 md:h-[420px] relative flex items-center justify-center overflow-hidden">
                         <!-- Сюда подставляется реальное изображение, видео или архитектурная карточка -->
                     </div>
 
@@ -877,6 +897,23 @@
                         <span>Дизайн-решения и акценты</span>
                     </div>
                     <ul id="modal-solutions" class="space-y-2.5 text-sm sm:text-base text-slate-200 leading-relaxed"></ul>
+                </div>
+
+                <!-- Контекстная плашка для видеокейсов (Кейсы 09 и 10) со ссылкой на видеопрезентацию в облаке -->
+                <div id="modal-video-cloud-banner" class="hidden p-4 sm:p-5 rounded-2xl bg-steel-500/10 border border-steel-400/35 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-steel-400/20 text-steel-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="play-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-bold text-white">Смотреть динамику и анимацию в движении</div>
+                            <p class="text-xs text-slate-300 mt-0.5">Полная видеопрезентация с анимацией схем, дашбордов и ИИ-роликами размещена в облаке.</p>
+                        </div>
+                    </div>
+                    <a href="#" data-cloud-link="videoShowreel" target="_blank" rel="noopener noreferrer" class="shrink-0 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-steel-500 hover:bg-steel-400 text-graphite-950 font-bold text-xs sm:text-sm transition-colors">
+                        <span>Открыть видео в облаке</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
                 </div>
 
                 <!-- Авторский инсайт из PDF -->
@@ -943,6 +980,34 @@
             if (window.lucide) {
                 lucide.createIcons();
             }
+
+            /* -----------------------------------------------------------------
+               0. ЕДИНЫЙ БЛОК ВНЕШНИХ ССЫЛОК НА ОБЛАКО И КОНТАКТЫ
+                  (Вставьте сюда ваши ссылки на Яндекс.Диск / Google Drive / видео)
+            ------------------------------------------------------------------ */
+            const EXTERNAL_LINKS = {
+                portfolioPdf: 'https://disk.yandex.ru/your-portfolio-pdf',   // <-- Ссылка на PDF-портфолио
+                resumePdf: 'https://disk.yandex.ru/your-resume-pdf',         // <-- Ссылка на Резюме (CV)
+                videoShowreel: 'https://disk.yandex.ru/your-video-showreel'  // <-- Ссылка на видеопрезентацию и анимацию схем
+            };
+
+            function bindCloudLinks() {
+                document.querySelectorAll('[data-cloud-link]').forEach(link => {
+                    const key = link.getAttribute('data-cloud-link');
+                    const url = EXTERNAL_LINKS[key];
+                    if (url) {
+                        link.setAttribute('href', url);
+                    }
+                    link.addEventListener('click', (e) => {
+                        const currentHref = link.getAttribute('href') || '';
+                        if (!currentHref || currentHref === '#' || currentHref.includes('your-')) {
+                            e.preventDefault();
+                            showToast('Укажите реальную ссылку на облако в блоке EXTERNAL_LINKS в index.html');
+                        }
+                    });
+                });
+            }
+            bindCloudLinks();
 
             /* -----------------------------------------------------------------
                1. БАЗА ДАННЫХ ВСЕХ 12 РЕАЛЬНЫХ КЕЙСОВ ИЗ PDF-ПОРТФОЛИО
@@ -1154,22 +1219,25 @@
                     id: 9,
                     num: 'КЕЙС 09',
                     code: '09',
+                    folder: 'cases/case-09',
+                    slideStart: 1,
+                    slideEnd: 9,
                     category: 'presentations-video',
                     categoryLabel: 'Презентации и видео',
-                    platform: 'PowerPoint / Анимация данных и ИИ-видео',
+                    platform: 'AI Video & Image / Генеративные нейросети',
                     year: '2026',
-                    title: 'Презентации. Видеоформат и ИИ',
-                    subtitle: 'Движение проектируется как статика: данные выходят в порядке смысла, ИИ как соавтор образа',
-                    summary: 'Анимация данных в слайдах («Период 2026», ₽103M) и видеоролики с генеративными нейросетями («150 лет встык», виртуальная ведущая, реставрация XIX века).',
-                    task: 'Оживить сложные аналитические дашборды и создать выразительный видеоконтент без натурных съёмок, объединив режиссуру тайминга, нейросетевую генерацию и инфографику.',
+                    title: 'ИИ-генерация и видеоформат',
+                    subtitle: 'ИИ как соавтор образа: исторические реконструкции и виртуальная ведущая без съёмок',
+                    summary: 'Видеоролики и кадры с генеративными нейросетями: «150 лет встык», виртуальная ведущая у фасада Ростовстата и реставрация портретов XIX века.',
+                    task: 'Создать выразительный видеоконтент и исторические визуализации без натурных съёмок, объединив режиссуру кадра, нейросетевую генерацию и документальную точность.',
                     facts: [
-                        'Анимированный дашборд «Период 2026»: общий объём продаж ₽103M, затраты на цепочку поставок ₽9.5M, средний цикл 40.9',
                         '«Связать 150 лет»: четыре эпохи встык в одном кадре — от дореволюционной сепии до современного цифрового офиса',
-                        '«Ведущая без съёмок» у фасада Ростовстата и «Статистика XIX века с лицом» (восстановление портрета дончанки по архивным фото)'
+                        '«Ведущая без съёмок» у фасада Ростовстата и репортажные сцены с ИИ-персонажами',
+                        '«Статистика XIX века с лицом»: восстановление и оживление портретов по архивным фото'
                     ],
                     solutions: [
-                        'Драматургия появления: цифра набирает значение из нуля, график растёт столбец за столбцом, главный акцент садится последним.',
-                        'Жёсткий авторский отбор ИИ-генераций: каждый финальный кадр выбран и доработан из десятков вариантов под строгим контролем цвета и цифр.'
+                        'Жёсткий авторский отбор ИИ-генераций: каждый финальный кадр выбран и доработан из десятков вариантов под строгим контролем света, анатомии и эпохи.',
+                        'Единая цветовая и композиционная связка между архивной фотографией, нейросетевой сценой и инфографикой.'
                     ],
                     insight: '«Промпт — это не задача. Задача — это смысл кадра, а нейросеть лишь предлагает варианты.»',
                     hasVideoSupport: true,
@@ -1178,7 +1246,35 @@
                 {
                     id: 10,
                     num: 'КЕЙС 10',
+                    code: '09',
+                    folder: 'cases/case-09',
+                    slideStart: 10,
+                    slideEnd: 18,
+                    category: 'presentations-video',
+                    categoryLabel: 'Презентации и видео',
+                    platform: 'PowerPoint / Анимация данных и графиков',
+                    year: '2026',
+                    title: 'Анимация данных и дашбордов',
+                    subtitle: 'Движение проектируется как статика: графики и показатели выходят в порядке смысла',
+                    summary: 'Анимация аналитических дашбордов и графиков («Период 2026», ₽103M, «Тенденции отрасли»), где каждая цифра и столбец появляются по сценарию.',
+                    task: 'Оживить сложные аналитические дашборды и многоуровневые графики для видеопрезентаций и выступлений так, чтобы зритель легко считывал динамику показателей.',
+                    facts: [
+                        'Анимированный дашборд «Период 2026»: общий объём продаж ₽103M, затраты на цепочку поставок ₽9.5M, средний цикл 40.9',
+                        'Серия аналитических экранов с круговыми диаграммами, прогресс-барами и региональными метриками («Тенденции отрасли»)',
+                        'Синхронизация появления графиков с дикторской подачей и ключевыми выводами'
+                    ],
+                    solutions: [
+                        'Драматургия появления: цифра набирает значение из нуля, график растёт столбец за столбцом, главный акцент садится последним.',
+                        'Чистая модульная сетка тёмного и светлого дашборда без визуального шума и лишних эффектов.'
+                    ],
+                    insight: '«Движение проектируется как статика: если кадр не читается в паузе, анимация его не спасёт.»',
+                    accentColor: 'steel'
+                },
+                {
+                    id: 11,
+                    num: 'КЕЙС 11',
                     code: '10',
+                    folder: 'cases/case-10',
                     category: 'graphics-posters',
                     categoryLabel: 'Графика и постеры',
                     platform: 'Affinity Photo / Авторская графика',
@@ -1196,12 +1292,13 @@
                         'Живописная фактура: фотография теряет буквальность и начинает работать как метафора.'
                     ],
                     insight: '«Фотография теряет документальность и приобретает живописность: слой за слоем, текстура за текстурой.»',
-                    accentColor: 'steel'
+                    accentColor: 'coral'
                 },
                 {
-                    id: 11,
-                    num: 'КЕЙС 11',
+                    id: 12,
+                    num: 'КЕЙС 12',
                     code: '11',
+                    folder: 'cases/case-11',
                     category: 'graphics-posters',
                     categoryLabel: 'Графика и постеры',
                     platform: 'Affinity Designer / Постеры',
@@ -1219,12 +1316,13 @@
                         'Два уровня восприятия: плакат читается силуэтом с трёх метров и раскрывает детали при близком взгляде.'
                     ],
                     insight: '«Типографика и образ на максимальной громкости: бьёт с трёх метров, держит вблизи.»',
-                    accentColor: 'coral'
+                    accentColor: 'steel'
                 },
                 {
-                    id: 12,
-                    num: 'КЕЙС 12',
+                    id: 13,
+                    num: 'КЕЙС 13',
                     code: '12',
+                    folder: 'cases/case-12',
                     category: 'graphics-posters',
                     categoryLabel: 'Графика и постеры',
                     platform: 'Affinity Designer / Карточки для соцсетей',
@@ -1242,7 +1340,7 @@
                         'Сохранение плакатной строгости даже в компактном мобильном размере.'
                     ],
                     insight: '«Вертикальная композиция для соцсетей: та же образность и та же строгость в размере экрана.»',
-                    accentColor: 'steel'
+                    accentColor: 'coral'
                 }
             ];
 
@@ -1277,20 +1375,24 @@
             }
 
             async function discoverCaseMedia(item) {
-                const folder = `cases/case-${item.code}`;
-                const indices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+                const folder = item.folder || `cases/case-${item.code}`;
+                const start = item.slideStart || 1;
+                const end = item.slideEnd || 25;
+                const indices = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
-                // Проверяем оба варианта именования: 1.jpg..15.jpg И старый формат case-XX.jpg / case-XX-1.jpg
-                const slotCandidates = [
-                    [
-                        `${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`,
-                        `${folder}/case-${item.code}.jpg`, `${folder}/case-${item.code}.png`, `${folder}/case-${item.code}.webp`
-                    ],
-                    ...indices.slice(1).map(idx => [
+                // Проверяем оба варианта именования: 1.jpg..25.jpg И старый формат case-XX.jpg / case-XX-1.jpg
+                const slotCandidates = indices.map(idx => {
+                    if (idx === 1) {
+                        return [
+                            `${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`,
+                            `${folder}/case-${item.code}.jpg`, `${folder}/case-${item.code}.png`, `${folder}/case-${item.code}.webp`
+                        ];
+                    }
+                    return [
                         `${folder}/${idx}.jpg`, `${folder}/${idx}.png`, `${folder}/${idx}.webp`,
                         `${folder}/case-${item.code}-${idx - 1}.jpg`, `${folder}/case-${item.code}-${idx - 1}.png`, `${folder}/case-${item.code}-${idx - 1}.webp`
-                    ])
-                ];
+                    ];
+                });
 
                 const imageResults = await Promise.all(
                     slotCandidates.map(candidates => probeFirstExisting(candidates))
@@ -1303,16 +1405,18 @@
                     }
                 });
 
-                // Проверяем наличие видеофайлов (актуально для Кейса 09 или шоурила)
-                const videoCandidates = [
-                    `${folder}/1.mp4`,
-                    `${folder}/2.mp4`,
-                    `${folder}/video.mp4`
-                ];
-                const videoResults = await Promise.all(videoCandidates.map(src => probeVideo(src)));
-                videoResults.forEach(src => {
-                    if (src) slides.push({ type: 'video', src });
-                });
+                // Проверяем наличие видеофайлов (если у кейса включена поддержка видео)
+                if (item.hasVideoSupport) {
+                    const videoCandidates = [
+                        `${folder}/1.mp4`,
+                        `${folder}/2.mp4`,
+                        `${folder}/video.mp4`
+                    ];
+                    const videoResults = await Promise.all(videoCandidates.map(src => probeVideo(src)));
+                    videoResults.forEach(src => {
+                        if (src) slides.push({ type: 'video', src });
+                    });
+                }
 
                 resolvedMediaMap.set(item.id, { slides });
             }
@@ -1470,6 +1574,7 @@
             ------------------------------------------------------------------ */
             function bindCardTiltEffect() {
                 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
                 document.querySelectorAll('.glass-card-hover:not([data-tilt-bound])').forEach(card => {
                     card.setAttribute('data-tilt-bound', 'true');
@@ -1649,6 +1754,16 @@
                     </li>
                 `).join('');
 
+                // Показываем кнопку перехода к видеопрезентации в облаке для Кейсов 09 (ИИ-видео) и 10 (Анимация данных)
+                const videoCloudBanner = document.getElementById('modal-video-cloud-banner');
+                if (videoCloudBanner) {
+                    if (item.id === 9 || item.id === 10) {
+                        videoCloudBanner.classList.remove('hidden');
+                    } else {
+                        videoCloudBanner.classList.add('hidden');
+                    }
+                }
+
                 updateSlideStage(item);
             }
 
@@ -1694,6 +1809,35 @@
                 currentModalIndex = (currentModalIndex + 1) % casesData.length;
                 populateModal(casesData[currentModalIndex]);
             });
+
+            // Свайпы пальцем влево/вправо для слайдов на телефонах и планшетах
+            function attachSwipe(element, onSwipeLeft, onSwipeRight) {
+                let startX = 0;
+                let startY = 0;
+                element.addEventListener('touchstart', (e) => {
+                    if (e.touches.length !== 1) return;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+
+                element.addEventListener('touchend', (e) => {
+                    if (!startX || e.changedTouches.length !== 1) return;
+                    const dx = e.changedTouches[0].clientX - startX;
+                    const dy = e.changedTouches[0].clientY - startY;
+                    startX = 0;
+                    startY = 0;
+                    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                        if (dx < 0) onSwipeLeft();
+                        else onSwipeRight();
+                    }
+                }, { passive: true });
+            }
+
+            attachSwipe(
+                modalVisual,
+                () => { if (currentSlideList.length > 1) slideNextBtn.click(); },
+                () => { if (currentSlideList.length > 1) slidePrevBtn.click(); }
+            );
 
             /* -----------------------------------------------------------------
                6. ПОЛНОЭКРАННЫЙ ЛАЙТБОКС И ЛУПА (ZOOM)
@@ -1770,6 +1914,12 @@
                 updateSlideStage(casesData[currentModalIndex]);
                 renderLightboxSlide();
             });
+
+            attachSwipe(
+                document.getElementById('lb-stage'),
+                () => { if (currentSlideList.length > 1 && !isZoomed) lbNextBtn.click(); },
+                () => { if (currentSlideList.length > 1 && !isZoomed) lbPrevBtn.click(); }
+            );
 
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox || e.target === document.getElementById('lb-stage')) {
