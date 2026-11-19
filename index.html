@@ -216,14 +216,14 @@
     ====================================================================== -->
     <header class="fixed top-0 inset-x-0 z-40 bg-graphite-950/80 backdrop-blur-xl border-b border-slate-800/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
-            <!-- Монограмма и имя -->
+            <!-- Фирменный логотип P.P. на красном круге и имя -->
             <a href="#top" class="flex items-center gap-3 group focus:outline-none">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center text-white font-mono font-bold text-sm shadow-lg shadow-coral-500/20 group-hover:scale-105 transition-transform">
-                    ПП
+                <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#E11D1D] flex items-center justify-center shadow-lg shadow-red-600/30 border border-red-400/30 group-hover:scale-105 transition-transform shrink-0">
+                    <span class="font-serif italic font-black text-white text-sm sm:text-base tracking-tight">P.P.</span>
                 </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-sm sm:text-base tracking-tight text-white leading-none">Павел Перов</span>
-                    <span class="font-mono text-[10px] sm:text-xs text-slate-400 mt-1">PaPer • Portfolio 2026</span>
+                    <span class="font-serif italic font-bold text-[11px] sm:text-xs text-[#E11D1D] mt-1 leading-none">PaPer <span class="font-mono not-italic font-normal text-slate-400">• 2026</span></span>
                 </div>
             </a>
 
@@ -903,7 +903,7 @@
     <footer class="relative z-10 border-t border-slate-800/80 bg-graphite-950/90 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
             <div class="flex items-center gap-3">
-                <span class="font-mono font-bold text-slate-200">PaPer</span>
+                <span class="font-serif italic font-bold text-[#E11D1D]">PaPer</span>
                 <span>&bull;</span>
                 <span>Павел Перов — Мультимедиа-дизайнер • AI-дизайнер</span>
             </div>
@@ -1447,7 +1447,7 @@
 
             /* -----------------------------------------------------------------
                2. УМНЫЙ ЗАГРУЗЧИК РЕАЛЬНЫХ ФАЙЛОВ ИЗ ПОДПАПОК cases/case-XX/
-                  (Автоматически проверяет 1..25 в форматах .jpg, .png, .webp и .mp4)
+                  (Поддерживает и 1.jpg, 2.jpg..., и старые имена case-01.jpg, case-01-1.jpg...)
             ------------------------------------------------------------------ */
             const resolvedMediaMap = new Map();
 
@@ -1486,8 +1486,24 @@
 
                 for (let idx = start; idx <= end; idx++) {
                     const candidates = idx === 1
-                        ? [`${folder}/1.jpg`, `${folder}/1.png`, `${folder}/1.webp`, `${folder}/case-${item.code}.jpg`]
-                        : [`${folder}/${idx}.jpg`, `${folder}/${idx}.png`, `${folder}/${idx}.webp`];
+                        ? [
+                            `${folder}/1.jpg`,
+                            `${folder}/1.png`,
+                            `${folder}/1.webp`,
+                            `${folder}/case-${item.code}.jpg`,
+                            `${folder}/case-${item.code}.png`,
+                            `${folder}/case-${item.code}-0.jpg`,
+                            `${folder}/case-${item.code}-1.jpg`
+                        ]
+                        : [
+                            `${folder}/${idx}.jpg`,
+                            `${folder}/${idx}.png`,
+                            `${folder}/${idx}.webp`,
+                            `${folder}/case-${item.code}-${idx - 1}.jpg`,
+                            `${folder}/case-${item.code}-${idx}.jpg`,
+                            `${folder}/case-${item.code}-${idx - 1}.png`,
+                            `${folder}/case-${item.code}-${idx}.png`
+                        ];
 
                     const foundSrc = await probeFirstExisting(candidates);
                     if (!foundSrc) break;
@@ -1655,7 +1671,7 @@
             }
 
             /* -----------------------------------------------------------------
-               4.1. ИНТЕРАКТИВНОЕ 3D-ПОКАЧИВАНИЕ КАРТОЧЕК ЗА КУРСОРОМ МЫШИ
+               4.1. ИНТЕРАКТИВНОЕ 3D-ПОКАЧИВАНИЕ КАРТОЧЕК ЗА КУРСОРОРОМ МЫШИ
             ------------------------------------------------------------------ */
             function bindCardTiltEffect() {
                 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
