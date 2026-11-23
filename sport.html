@@ -37,6 +37,7 @@
     body {
       background-color: #0B0F19;
       color: #F8FAFC;
+      overflow-x: hidden;
       background-image:
         radial-gradient(circle at 15% 10%, rgba(139, 0, 0, 0.22), transparent 38%),
         radial-gradient(circle at 85% 20%, rgba(255, 90, 31, 0.14), transparent 40%),
@@ -49,6 +50,52 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .glass-card-hover {
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .glass-card-hover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      background: radial-gradient(
+        420px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 90, 31, 0.14),
+        rgba(59, 130, 246, 0.06) 45%,
+        transparent 75%
+      );
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(255, 90, 31, 0.48);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.65), 0 0 26px -6px rgba(255, 90, 31, 0.22);
+    }
+    .glass-card-hover:hover::after {
+      opacity: 1;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .glass-card-hover:hover { transform: none !important; }
+      .glass-card-hover::after { display: none; }
+    }
+    @media (hover: none) {
+      .glass-card-hover:hover { transform: none !important; }
+      .glass-card-hover::after { display: none; }
     }
     .fire-glow {
       box-shadow: 0 12px 35px -8px rgba(255, 90, 31, 0.35);
@@ -66,83 +113,14 @@
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Интерактивное 3D-покачивание и подсветка карточек под курсором */
-    .glass-card-hover {
-      position: relative;
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
-    }
-    .glass-card-hover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-      background: radial-gradient(
-        420px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(255, 90, 31, 0.13),
-        rgba(59, 130, 246, 0.06) 45%,
-        transparent 75%
-      );
-    }
-    .glass-card-hover:hover {
-      border-color: rgba(255, 90, 31, 0.48);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.65), 0 0 26px -6px rgba(255, 90, 31, 0.22);
-    }
-    .glass-card-hover:hover::after {
-      opacity: 1;
-    }
-
-    /* Плавное появление блоков при прокрутке */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .reveal.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
-      }
-      .glass-card-hover:hover {
-        transform: none !important;
-      }
-      .glass-card-hover::after {
-        display: none;
-      }
-    }
-
-    @media (hover: none) {
-      .glass-card-hover:hover {
-        transform: none !important;
-      }
-      .glass-card-hover::after {
-        display: none;
-      }
-    }
   </style>
 </head>
-<body class="antialiased selection:bg-[#FF5A1F] selection:text-white overflow-x-hidden relative">
+<body class="antialiased selection:bg-[#FF5A1F] selection:text-white relative">
 
-  <!-- Живой фоновый Canvas в фирменной гамме «Атлет 360» (узлы + огненная траектория роста) -->
-  <canvas id="bg-network-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-85" aria-hidden="true"></canvas>
+  <canvas id="bg-network-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80" aria-hidden="true"></canvas>
 
-  <!-- Индикатор прогресса прокрутки -->
   <div id="scroll-progress" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-[#8B0000] via-[#FF5A1F] to-[#3B82F6] z-50 transition-all duration-150" style="width: 0%"></div>
 
-  <!-- =====================================================================
-       БЛОК 1. ШАПКА НАВИГАЦИИ (HEADER)
-  ====================================================================== -->
   <header class="sticky top-0 z-40 glass-panel border-b border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3 sm:gap-4">
@@ -157,7 +135,6 @@
         </a>
       </div>
 
-      <!-- Десктопная навигация -->
       <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
         <a href="index.html" class="hover:text-white transition-colors flex items-center gap-1.5 text-slate-400">
           <span>← Основное портфолио</span>
@@ -172,16 +149,18 @@
       </nav>
 
       <div class="flex items-center gap-2 sm:gap-3">
+        <a href="https://t.me/atlet360_pro" data-link="telegramChannel" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 text-xs sm:text-sm font-semibold border border-white/15 transition-all">
+          <span>Telegram-канал</span>
+        </a>
         <a href="#pricing" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white text-xs sm:text-sm font-bold transition-all fire-glow">
           <span>Тарифы 3 в 1</span>
         </a>
-        <button id="mobile-menu-btn" type="button" class="lg:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10" aria-label="Меню">
+        <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10" aria-label="Меню">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Мобильное меню -->
     <div id="mobile-menu" class="hidden lg:hidden border-t border-white/10 bg-[#0B0F19]/95 px-4 py-4 space-y-2 text-sm">
       <a href="index.html" class="block py-2 px-3 rounded-lg bg-white/5 text-slate-300 font-medium">← Вернуться в основное портфолио</a>
       <div class="grid grid-cols-2 gap-2 pt-1">
@@ -195,13 +174,9 @@
     </div>
   </header>
 
-  <!-- =====================================================================
-       БЛОК 2. ПЕРВЫЙ ЭКРАН (HERO SECTION)
-  ====================================================================== -->
   <section class="relative z-10 pt-10 pb-14 sm:pt-16 sm:pb-20 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-        <!-- Левая колонка -->
         <div class="lg:col-span-7 space-y-6">
           <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#8B0000]/30 border border-[#FF5A1F]/40 text-xs sm:text-sm font-semibold text-orange-200">
             <span class="w-2 h-2 rounded-full bg-[#FF5A1F] animate-pulse"></span>
@@ -217,12 +192,15 @@
           </p>
 
           <div class="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
-            <a href="#pricing" data-link="boosty" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm sm:text-base transition-all fire-glow">
-              <span>Выбрать тариф на Boosty</span>
+            <a href="https://t.me/pavel_atlet360?text=%D0%94%D0%95%D0%9C%D0%9E" data-link="telegramDm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm sm:text-base transition-all fire-glow">
+              <span>Получить бесплатное ДЕМО</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
-            <a href="#demo" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-semibold text-sm sm:text-base border border-white/15 transition-all">
-              <span>Запросить бесплатное ДЕМО</span>
+            <a href="https://t.me/atlet360_pro" data-link="telegramChannel" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-semibold text-sm sm:text-base border border-white/15 transition-all">
+              <span>Канал @atlet360_pro</span>
+            </a>
+            <a href="https://boosty.to/athlet360" data-link="boosty" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-orange-200 font-semibold text-sm sm:text-base border border-[#FF5A1F]/35 transition-all">
+              <span>Тарифы на Boosty</span>
             </a>
           </div>
 
@@ -233,12 +211,11 @@
           </div>
         </div>
 
-        <!-- Правая колонка: Логотип и баннер -->
         <div class="lg:col-span-5">
           <div class="relative rounded-3xl overflow-hidden border border-[#FF5A1F]/30 bg-[#121214] shadow-2xl shadow-black/60 group glass-card-hover">
-            <img src="sport/banner-360.jpg" alt="Атлет 360 — Трекеры Excel + PDF" class="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500" onerror="this.src='https://placehold.co/960x540/121214/FF5A1F?text=ATLET+360+EXCEL+%2B+PDF'" />
+            <img src="sport/banner-360.jpg" alt="Атлет 360 — Трекеры Excel + PDF" class="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500" onerror="this.style.display='none'" />
             <div class="p-5 sm:p-6 bg-gradient-to-t from-[#0B0F19] via-[#111827] to-[#111827]/95 flex items-center gap-4 border-t border-white/10">
-              <img src="sport/logo-360.jpg" alt="Логотип Атлет 360" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#FF5A1F] shadow-lg shadow-orange-950/60 shrink-0" onerror="this.src='https://placehold.co/200x200/8B0000/FFFFFF?text=360'" />
+              <img src="sport/logo-360.jpg" alt="Логотип Атлет 360" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#FF5A1F] shadow-lg shadow-orange-950/60 shrink-0" onerror="this.style.display='none'" />
               <div>
                 <div class="text-xs font-mono uppercase tracking-wider text-[#FF5A1F] font-bold">Линейка 2026</div>
                 <div class="text-lg sm:text-xl font-extrabold text-white">3 независимых трекера</div>
@@ -249,7 +226,6 @@
         </div>
       </div>
 
-      <!-- 4 карточки-факта -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-10 sm:mt-14">
         <div class="glass-panel glass-card-hover rounded-2xl p-4 sm:p-5 border-l-4 border-l-[#FF5A1F]">
           <div class="text-2xl sm:text-3xl font-black text-white font-mono">3 + 3</div>
@@ -271,9 +247,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 3. ЗАДАЧА И ЛИЧНАЯ ИСТОРИЯ СОЗДАНИЯ
-  ====================================================================== -->
   <section id="story" class="relative z-10 py-14 sm:py-20 border-t border-white/10 reveal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="max-w-3xl mb-10 sm:mb-12">
@@ -285,7 +258,6 @@
       </div>
 
       <div class="grid lg:grid-cols-12 gap-8 items-start">
-        <!-- Таймлайн -->
         <div class="lg:col-span-7 space-y-4">
           <div class="glass-panel glass-card-hover rounded-2xl p-5 sm:p-6 relative">
             <div class="flex items-center gap-3 mb-2">
@@ -318,13 +290,12 @@
           </div>
         </div>
 
-        <!-- Правая визуальная карточка -->
         <div class="lg:col-span-5 space-y-4">
           <div class="glass-panel glass-card-hover rounded-3xl p-4 sm:p-5 border border-white/10">
-            <img src="sport/card-overview.png" alt="Умный трекер тренировок: Бег + Турник и брусья PRO" class="w-full h-auto rounded-2xl shadow-lg cursor-zoom-in" onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" onerror="this.src='https://placehold.co/600x750/111827/FF5A1F?text=ATLET+360+OVERVIEW'" />
+            <img src="sport/card-overview.png" alt="Умный трекер тренировок: Бег + Турник и брусья PRO" class="w-full h-auto rounded-2xl shadow-lg cursor-zoom-in" onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" onerror="this.style.display='none'" />
             <div class="mt-4 flex items-center justify-between text-xs text-slate-400 px-1">
               <span>Для взрослых любителей спорта 35–60+ лет</span>
-              <button type="button" onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" class="text-[#FF5A1F] hover:underline font-semibold">Увеличить ↗</button>
+              <button onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" class="text-[#FF5A1F] hover:underline font-semibold">Увеличить ↗</button>
             </div>
           </div>
         </div>
@@ -332,9 +303,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 4. ИНТЕРАКТИВНЫЙ ОБЗОР ТРЁХ ТРЕКЕРОВ (4 ВКЛАДКИ EXCEL)
-  ====================================================================== -->
   <section id="trackers" class="relative z-10 py-14 sm:py-20 border-t border-white/10 bg-[#080B12]/70 reveal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-10">
@@ -346,28 +314,24 @@
           </p>
         </div>
 
-        <!-- Вкладки-переключатели -->
         <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" role="tablist">
-          <button type="button" onclick="switchTracker('run')" id="tab-run" class="tracker-tab tab-active px-5 py-3 rounded-xl font-bold text-sm border border-white/10 whitespace-nowrap transition-all">
+          <button onclick="switchTracker('run')" id="tab-run" class="tracker-tab tab-active px-5 py-3 rounded-xl font-bold text-sm border border-white/10 whitespace-nowrap transition-all">
             1. Бег (Running Pro)
           </button>
-          <button type="button" onclick="switchTracker('workout')" id="tab-workout" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
+          <button onclick="switchTracker('workout')" id="tab-workout" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
             2. Воркаут (Workout Pro)
           </button>
-          <button type="button" onclick="switchTracker('strength')" id="tab-strength" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
+          <button onclick="switchTracker('strength')" id="tab-strength" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
             3. Силовые (Gym Pro)
           </button>
         </div>
       </div>
 
-      <!-- Контейнер динамического контента выбранного трекера -->
-      <div id="tracker-panel" class="glass-panel rounded-3xl p-5 sm:p-8 border border-white/10"></div>
+      <div id="tracker-panel" class="glass-panel rounded-3xl p-5 sm:p-8 border border-white/10">
+      </div>
     </div>
   </section>
 
-  <!-- =====================================================================
-       ИНТЕРАКТИВНЫЙ СИМУЛЯТОР ЛОГИКИ ФОРМУЛ (EF, КАРВОНЕН, РИГЕЛЬ, 1ПМ)
-  ====================================================================== -->
   <section id="simulator" class="relative z-10 py-14 sm:py-20 border-t border-white/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="max-w-3xl mb-8 sm:mb-10">
@@ -379,7 +343,6 @@
       </div>
 
       <div class="grid lg:grid-cols-2 gap-6">
-        <!-- Симулятор 1: Бег -->
         <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10">
           <div class="flex items-center justify-between mb-5">
             <div>
@@ -391,22 +354,22 @@
 
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label for="sim-dist" class="block text-xs text-slate-400 mb-1">Дистанция (км)</label>
+              <label class="block text-xs text-slate-400 mb-1">Дистанция (км)</label>
               <input id="sim-dist" type="number" step="0.1" min="0.5" max="42.2" value="5.0" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
-              <label for="sim-time" class="block text-xs text-slate-400 mb-1">Время пробежки (мин)</label>
+              <label class="block text-xs text-slate-400 mb-1">Время пробежки (мин)</label>
               <input id="sim-time" type="number" step="0.5" min="2" max="300" value="32.5" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
-              <label for="sim-hr" class="block text-xs text-slate-400 mb-1">Средний пульс (уд/мин)</label>
+              <label class="block text-xs text-slate-400 mb-1">Средний пульс (уд/мин)</label>
               <input id="sim-hr" type="number" min="80" max="210" value="132" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
               <label class="block text-xs text-slate-400 mb-1">Возраст / Пульс покоя</label>
               <div class="grid grid-cols-2 gap-2">
-                <input id="sim-age" type="number" min="18" max="85" value="60" oninput="calcRunSim()" title="Возраст" aria-label="Возраст" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
-                <input id="sim-rest" type="number" min="35" max="100" value="48" oninput="calcRunSim()" title="Пульс покоя" aria-label="Пульс покоя" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
+                <input id="sim-age" type="number" min="18" max="85" value="60" oninput="calcRunSim()" title="Возраст" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
+                <input id="sim-rest" type="number" min="35" max="100" value="48" oninput="calcRunSim()" title="Пульс покоя" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
               </div>
             </div>
           </div>
@@ -435,7 +398,6 @@
           </div>
         </div>
 
-        <!-- Симулятор 2: Воркаут и Силовые -->
         <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10">
           <div class="flex items-center justify-between mb-5">
             <div>
@@ -447,19 +409,19 @@
 
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <label for="sim-weight" class="block text-xs text-slate-400 mb-1">Рабочий вес (кг)</label>
+              <label class="block text-xs text-slate-400 mb-1">Рабочий вес (кг)</label>
               <input id="sim-weight" type="number" step="1" min="5" max="350" value="82" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
-              <label for="sim-reps" class="block text-xs text-slate-400 mb-1">Всего повторений</label>
+              <label class="block text-xs text-slate-400 mb-1">Всего повторений</label>
               <input id="sim-reps" type="number" step="1" min="1" max="500" value="32" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
-              <label for="sim-maxrep" class="block text-xs text-slate-400 mb-1">Макс. повторений в подходе</label>
+              <label class="block text-xs text-slate-400 mb-1">Макс. повторений в подходе</label>
               <input id="sim-maxrep" type="number" step="1" min="1" max="60" value="10" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
             <div>
-              <label for="sim-dur" class="block text-xs text-slate-400 mb-1">Время тренировки (мин)</label>
+              <label class="block text-xs text-slate-400 mb-1">Время тренировки (мин)</label>
               <input id="sim-dur" type="number" step="1" min="5" max="180" value="25" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
             </div>
           </div>
@@ -486,9 +448,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 5. КАК УСТРОЕНА РАБОТА ЗА 3 ШАГА
-  ====================================================================== -->
   <section id="workflow" class="relative z-10 py-14 sm:py-20 border-t border-white/10 bg-[#080B12]/70 reveal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="max-w-3xl mb-10 sm:mb-12">
@@ -527,9 +486,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 6. ТАРИФНАЯ СЕТКА И УСЛОВИЯ ДОСТУПА
-  ====================================================================== -->
   <section id="pricing" class="relative z-10 py-14 sm:py-20 border-t border-white/10 reveal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid lg:grid-cols-12 gap-8 items-center mb-10 sm:mb-12">
@@ -541,8 +497,8 @@
           </p>
         </div>
         <div class="lg:col-span-4 flex justify-start lg:justify-end">
-          <div class="flex items-center gap-4 glass-panel p-3 rounded-2xl border border-[#FF5A1F]/30">
-            <img src="sport/bundle-3in1.jpg" alt="Комплект 3 в 1 Атлет 360" class="w-16 h-16 rounded-xl object-cover cursor-zoom-in" onclick="openLightbox('sport/bundle-3in1.jpg', 'Комплект 3 в 1: Бег · Воркаут · Силовые')" onerror="this.src='https://placehold.co/200x200/8B0000/FFFFFF?text=3+в+1'" />
+          <div class="flex items-center gap-4 glass-panel glass-card-hover p-3 rounded-2xl border border-[#FF5A1F]/30">
+            <img src="sport/bundle-3in1.jpg" alt="Комплект 3 в 1 Атлет 360" class="w-16 h-16 rounded-xl object-cover cursor-zoom-in" onclick="openLightbox('sport/bundle-3in1.jpg', 'Комплект 3 в 1: Бег · Воркаут · Силовые')" onerror="this.style.display='none'" />
             <div class="text-xs">
               <div class="font-bold text-white text-sm">Комплект 3 в 1</div>
               <div class="text-slate-400">Бег + Воркаут + Силовые</div>
@@ -553,7 +509,6 @@
       </div>
 
       <div class="grid lg:grid-cols-3 gap-6 items-stretch">
-        <!-- Тариф 1 -->
         <div class="glass-panel glass-card-hover rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between">
           <div>
             <div class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Базовый старт</div>
@@ -572,12 +527,11 @@
               <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Работает в Excel, LibreOffice и WPS Office</span></li>
             </ul>
           </div>
-          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm border border-white/15 transition-all">
+          <a href="https://boosty.to/athlet360" data-link="boosty" target="_blank" rel="noopener noreferrer" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm border border-white/15 transition-all">
             Оформить на Boosty →
           </a>
         </div>
 
-        <!-- Тариф 2 (Хит) -->
         <div class="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#1E1418] to-[#111827] border-2 border-[#FF5A1F] shadow-2xl shadow-orange-950/40 flex flex-col justify-between glass-card-hover">
           <div class="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] text-white text-xs font-extrabold uppercase tracking-wider shadow-lg">
             Хит · Выгода 16%
@@ -599,12 +553,11 @@
               <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Единый стандарт аналитики на 300–400 тренировок в каждом файле</span></li>
             </ul>
           </div>
-          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
+          <a href="https://boosty.to/athlet360" data-link="boosty" target="_blank" rel="noopener noreferrer" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
             Выбрать «Стандарт» на Boosty →
           </a>
         </div>
 
-        <!-- Тариф 3 (PRO) -->
         <div class="glass-panel glass-card-hover rounded-3xl p-6 sm:p-8 border border-blue-500/30 flex flex-col justify-between">
           <div>
             <div class="text-xs font-mono uppercase tracking-wider text-blue-400 font-bold">Открытый код формул</div>
@@ -623,7 +576,7 @@
               <li class="flex items-start gap-2.5"><span class="text-blue-400 font-bold">✓</span><span>Идеально для глубокой кастомизации</span></li>
             </ul>
           </div>
-          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-blue-600/25 hover:bg-blue-600/35 text-blue-200 font-bold text-sm border border-blue-400/40 transition-all">
+          <a href="https://boosty.to/athlet360" data-link="boosty" target="_blank" rel="noopener noreferrer" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-blue-600/25 hover:bg-blue-600/35 text-blue-200 font-bold text-sm border border-blue-400/40 transition-all">
             Выбрать «PRO» на Boosty →
           </a>
         </div>
@@ -631,9 +584,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 7. ЛИД-МАГНИТ «ПОПРОБУЙТЕ БЕСПЛАТНО ПЕРЕД ПОКУПКОЙ» (ДЕМО)
-  ====================================================================== -->
   <section id="demo" class="relative z-10 py-14 sm:py-20 border-t border-white/10 reveal">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="rounded-3xl p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-[#8B0000]/45 via-[#161F33] to-[#0F172A] border border-[#FF5A1F]/40 relative overflow-hidden">
@@ -646,14 +596,17 @@
               Попробуйте «Атлет 360» бесплатно по слову «ДЕМО»
             </h2>
             <p class="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
-              Напишите кодовое слово <strong class="text-[#FF5A1F]">ДЕМО</strong> в личные сообщения Telegram или Boosty — и я бесплатно отправлю вам 3-строчные пробные файлы всех трёх трекеров (Бег, Воркаут, Силовые), чтобы вы проверили работу формул и дашбордов на своём устройстве. По желанию приложу обезличенный фрагмент моего реального дневника за 4 месяца.
+              Напишите кодовое слово <strong class="text-[#FF5A1F]">ДЕМО</strong> в личные сообщения Telegram (@pavel_atlet360) — и я бесплатно отправлю вам 3-строчные пробные файлы всех трёх трекеров (Бег, Воркаут, Силовые), чтобы вы проверили работу формул и дашбордов на своём устройстве. По желанию приложу обезличенный фрагмент моего реального дневника за 4 месяца.
             </p>
             <div class="flex flex-wrap items-center gap-3 pt-2">
-              <a href="#" data-link="telegram" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#FF5A1F] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
+              <a href="https://t.me/pavel_atlet360?text=%D0%94%D0%95%D0%9C%D0%9E" data-link="telegramDm" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#FF5A1F] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
                 <span>Написать «ДЕМО» в Telegram</span>
               </a>
-              <button type="button" onclick="copyDemoWord()" id="copy-demo-btn" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-mono text-sm font-bold border border-white/15 transition-all">
-                <span>Скопировать слово: ДЕМО</span>
+              <a href="https://t.me/atlet360_pro" data-link="telegramChannel" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-semibold text-sm border border-white/15 transition-all">
+                <span>Telegram-канал @atlet360_pro</span>
+              </a>
+              <button onclick="copyDemoWord()" id="copy-demo-btn" class="inline-flex items-center gap-2 px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-200 font-mono text-xs sm:text-sm font-bold border border-white/15 transition-all">
+                <span>Копировать: ДЕМО</span>
               </button>
               <a href="#" data-link="youtube" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-red-600/20 hover:bg-red-600/30 text-red-200 font-semibold text-sm border border-red-500/30 transition-all">
                 <span>▶ Видеообзоры (YouTube Shorts)</span>
@@ -668,7 +621,7 @@
               <div class="text-sm text-white font-semibold flex items-center gap-2"><span class="text-emerald-400">✔</span> Демо-файл «Воркаут» (3 строки + дашборды)</div>
               <div class="text-sm text-white font-semibold flex items-center gap-2"><span class="text-emerald-400">✔</span> Демо-файл «Силовые» (10 упр. + 1ПМ)</div>
               <div class="text-xs text-slate-400 pt-2 border-t border-white/10">
-                * Витрина Boosty и канал с видеообзорами готовятся к запуску — ссылки обновятся в один клик.
+                * Telegram-канал <a href="https://t.me/atlet360_pro" target="_blank" rel="noopener noreferrer" class="text-[#FF5A1F] hover:underline">@atlet360_pro</a> и личка <a href="https://t.me/pavel_atlet360?text=%D0%94%D0%95%D0%9C%D0%9E" target="_blank" rel="noopener noreferrer" class="text-blue-300 hover:underline">@pavel_atlet360</a> уже активны.
               </div>
             </div>
           </div>
@@ -677,9 +630,6 @@
     </div>
   </section>
 
-  <!-- =====================================================================
-       БЛОК 8. ФУТЕР И СВЯЗЬ С ОСНОВНЫМ ПОРТФОЛИО
-  ====================================================================== -->
   <footer class="relative z-10 py-10 sm:py-12 border-t border-white/10 bg-[#070A10]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-3.5">
@@ -694,18 +644,18 @@
 
       <div class="flex flex-wrap items-center justify-center gap-5 text-xs sm:text-sm text-slate-400">
         <a href="index.html" class="text-white hover:text-[#FF5A1F] font-semibold transition-colors">← На главную портфолио</a>
-        <a href="#" data-link="boosty" class="hover:text-white transition-colors">Boosty</a>
-        <a href="#" data-link="telegram" class="hover:text-white transition-colors">Telegram</a>
+        <a href="https://t.me/atlet360_pro" data-link="telegramChannel" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Telegram-канал</a>
+        <a href="https://t.me/pavel_atlet360?text=%D0%94%D0%95%D0%9C%D0%9E" data-link="telegramDm" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Написать в личку</a>
+        <a href="https://boosty.to/athlet360" data-link="boosty" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Boosty</a>
         <a href="#" data-link="youtube" class="hover:text-white transition-colors">YouTube Shorts</a>
       </div>
     </div>
   </footer>
 
-  <!-- Модальное окно полноэкранного просмотра скриншотов (Lightbox) -->
-  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения" class="fixed inset-0 z-50 hidden bg-black/92 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
-    <button type="button" onclick="closeLightbox()" class="absolute top-4 right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl font-bold" aria-label="Закрыть">×</button>
-    <button type="button" id="lb-prev" onclick="stepLightbox(-1)" class="hidden sm:flex absolute left-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold" aria-label="Предыдущий слайд">‹</button>
-    <button type="button" id="lb-next" onclick="stepLightbox(1)" class="hidden sm:flex absolute right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold" aria-label="Следующий слайд">›</button>
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/92 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <button onclick="closeLightbox()" class="absolute top-4 right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl font-bold" aria-label="Закрыть">×</button>
+    <button id="lb-prev" onclick="stepLightbox(-1)" class="hidden sm:flex absolute left-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold">‹</button>
+    <button id="lb-next" onclick="stepLightbox(1)" class="hidden sm:flex absolute right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold">›</button>
 
     <div class="max-w-6xl w-full flex flex-col items-center">
       <img id="lb-img" src="" alt="" class="max-h-[80dvh] w-auto rounded-2xl border border-white/15 shadow-2xl object-contain" />
@@ -713,20 +663,16 @@
     </div>
   </div>
 
-  <!-- Всплывающее уведомление (Toast) для заглушек ссылок и копирования -->
-  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-50 hidden max-w-sm glass-panel border border-[#FF5A1F]/50 rounded-2xl p-4 shadow-2xl text-sm text-white"></div>
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden max-w-sm glass-panel border border-[#FF5A1F]/50 rounded-2xl p-4 shadow-2xl text-sm text-white"></div>
 
   <script>
-    // =========================================================================
-    // ЕДИНЫЙ БЛОК НАСТРОЙКИ ССЫЛОК (Вставьте свои URL когда будут готовы)
-    // =========================================================================
     const ATHLETE360_LINKS = {
-      boosty: "#",     // Например: "https://boosty.to/ваш_профиль"
-      telegram: "#",   // Например: "https://t.me/ваш_ник"
-      youtube: "#"     // Например: "https://youtube.com/@ваш_канал/shorts"
+      telegramChannel: "https://t.me/atlet360_pro",
+      telegramDm: "https://t.me/pavel_atlet360?text=%D0%94%D0%95%D0%9C%D0%9E",
+      boosty: "https://boosty.to/athlet360",
+      youtube: "#"
     };
 
-    // Привязка ссылок к кнопкам
     document.querySelectorAll('[data-link]').forEach(el => {
       const key = el.getAttribute('data-link');
       const url = ATHLETE360_LINKS[key];
@@ -737,7 +683,7 @@
       } else {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          const names = { boosty: 'Boosty', telegram: 'Telegram', youtube: 'YouTube Shorts' };
+          const names = { boosty: 'Boosty', youtube: 'YouTube Shorts' };
           showToast(`Ссылка на ${names[key] || 'ресурс'} скоро появится — витрина «Атлет 360» в финальной сборке!`);
         });
       }
@@ -751,33 +697,16 @@
       window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 4200);
     }
 
-    function copyTextToClipboard(text) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-      } catch (err) {
-        // Игнорируем ошибку, если буфер недоступен
-      } finally {
-        document.body.removeChild(textarea);
-      }
-    }
-
     function copyDemoWord() {
-      copyTextToClipboard('ДЕМО');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText('ДЕМО');
+      }
       const btn = document.getElementById('copy-demo-btn');
       btn.textContent = '✓ Скопировано: ДЕМО';
       showToast('Кодовое слово «ДЕМО» скопировано в буфер обмена!');
-      setTimeout(() => { btn.innerHTML = '<span>Скопировать слово: ДЕМО</span>'; }, 3000);
+      setTimeout(() => { btn.innerHTML = '<span>Копировать: ДЕМО</span>'; }, 3000);
     }
 
-    // =========================================================================
-    // ДАННЫЕ ПО ТРЁМ ТРЕКЕРАМ (Все 4 вкладки + постеры)
-    // =========================================================================
     const TRACKERS_DATA = {
       run: {
         badge: "Модуль 1 · Running Analytics Pro · 400 пробежек",
@@ -857,11 +786,11 @@
       panel.innerHTML = `
         <div class="grid lg:grid-cols-12 gap-8 items-start">
           <div class="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4">
-            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19]">
-              <img src="${data.poster}" alt="${data.title}" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.poster}', '${data.title}')" onerror="this.src='https://placehold.co/540x960/121214/FF5A1F?text=ATLET+360'" />
+            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19] glass-card-hover">
+              <img src="${data.poster}" alt="${data.title}" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.poster}', '${data.title}')" />
             </div>
-            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19]">
-              <img src="${data.featureCard}" alt="Карточка модуля" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.featureCard}', '${data.title}')" onerror="this.src='https://placehold.co/600x750/111827/FF5A1F?text=MODULE+CARD'" />
+            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19] glass-card-hover">
+              <img src="${data.featureCard}" alt="Карточка модуля" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.featureCard}', '${data.title}')" />
             </div>
           </div>
 
@@ -892,7 +821,7 @@
                 ${data.screens.map((s, idx) => `
                   <div onclick="openGalleryLightbox(${idx})" class="group cursor-zoom-in rounded-2xl overflow-hidden border border-white/10 hover:border-[#FF5A1F]/60 bg-[#0B0F19] transition-all glass-card-hover">
                     <div class="aspect-[16/10] overflow-hidden bg-slate-900">
-                      <img src="${s.src}" alt="${s.title}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/800x500/0F172A/3B82F6?text=Excel+Dashboard'" />
+                      <img src="${s.src}" alt="${s.title}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" />
                     </div>
                     <div class="p-3 text-xs font-medium text-slate-300 group-hover:text-white flex items-center justify-between gap-2">
                       <span>${s.title}</span>
@@ -905,11 +834,10 @@
           </div>
         </div>
       `;
-      applyTypography(panel);
       bindCardTiltEffect();
+      applyTypography(panel);
     }
 
-    // Функции полноэкранного просмотра (Lightbox)
     function openGalleryLightbox(idx) {
       currentLightboxIdx = idx;
       const item = currentLightboxList[idx];
@@ -953,7 +881,6 @@
       if (e.key === 'ArrowLeft') stepLightbox(-1);
     });
 
-    // Поддержка свайпов на мобильных устройствах в лайтбоксе
     let touchStartX = 0;
     const lb = document.getElementById('lightbox');
     lb.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
@@ -962,9 +889,6 @@
       if (Math.abs(diff) > 45) stepLightbox(diff < 0 ? 1 : -1);
     }, { passive: true });
 
-    // =========================================================================
-    // ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР ФОРМУЛ (EF, Карвонен, Ригель, Эпли 1ПМ)
-    // =========================================================================
     function formatSeconds(sec) {
       const h = Math.floor(sec / 3600);
       const m = Math.floor((sec % 3600) / 60);
@@ -1015,9 +939,59 @@
       document.getElementById('out-1rm').textContent = oneRm.toFixed(1) + ' кг';
     }
 
-    // =========================================================================
-    // ТИПОГРАФИКА БЕЗ ВИСЯЧИХ ПРЕДЛОГОВ И СОЮЗОВ
-    // =========================================================================
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function bindCardTiltEffect() {
+      if (prefersReducedMotion) return;
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      document.querySelectorAll('.glass-card-hover:not([data-tilt-bound])').forEach(card => {
+        card.setAttribute('data-tilt-bound', 'true');
+
+        card.addEventListener('mouseenter', () => {
+          card.style.transition = 'transform 0.1s ease-out, border-color 0.35s ease, box-shadow 0.35s ease';
+        });
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const normX = (x / rect.width - 0.5) * 2;
+          const normY = (y / rect.height - 0.5) * 2;
+          const rotateY = (normX * 5.0).toFixed(2);
+          const rotateX = (-normY * 2.8).toFixed(2);
+
+          card.style.setProperty('--mx', `${x.toFixed(0)}px`);
+          card.style.setProperty('--my', `${y.toFixed(0)}px`);
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease';
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+      });
+    }
+
+    const revealElements = document.querySelectorAll('.reveal');
+    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
+
+      revealElements.forEach(el => observer.observe(el));
+      setTimeout(() => {
+        revealElements.forEach(el => el.classList.add('is-visible'));
+      }, 1400);
+    } else {
+      revealElements.forEach(el => el.classList.add('is-visible'));
+    }
+
     function applyTypography(root = document.body) {
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
         acceptNode(node) {
@@ -1039,7 +1013,6 @@
       }
     }
 
-    // Мобильное меню и прогресс прокрутки
     document.getElementById('mobile-menu-btn').addEventListener('click', () => {
       document.getElementById('mobile-menu').classList.toggle('hidden');
     });
@@ -1054,72 +1027,6 @@
       document.getElementById('scroll-progress').style.width = pct + '%';
     }, { passive: true });
 
-    // =========================================================================
-    // ИНТЕРАКТИВНОЕ 3D-ПОКАЧИВАНИЕ КАРТОЧЕК ЗА КУРСОРОМ МЫШИ
-    // =========================================================================
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function bindCardTiltEffect() {
-      if (prefersReducedMotion) return;
-      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-
-      document.querySelectorAll('.glass-card-hover:not([data-tilt-bound])').forEach(card => {
-        card.setAttribute('data-tilt-bound', 'true');
-
-        card.addEventListener('mouseenter', () => {
-          card.style.transition = 'transform 0.1s ease-out, border-color 0.35s ease, box-shadow 0.35s ease';
-        });
-
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          const normX = (x / rect.width - 0.5) * 2;
-          const normY = (y / rect.height - 0.5) * 2;
-
-          const rotateY = (normX * 5).toFixed(2);
-          const rotateX = (-normY * 2.8).toFixed(2);
-
-          card.style.setProperty('--mx', `${x.toFixed(0)}px`);
-          card.style.setProperty('--my', `${y.toFixed(0)}px`);
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-        });
-
-        card.addEventListener('mouseleave', () => {
-          card.style.transition = 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease';
-          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
-        });
-      });
-    }
-
-    // =========================================================================
-    // ПЛАВНОЕ ПОЯВЛЕНИЕ СЕКЦИЙ ПРИ СКРОЛЛЕ (IntersectionObserver)
-    // =========================================================================
-    const revealElements = document.querySelectorAll('.reveal');
-    if (!prefersReducedMotion && 'IntersectionObserver' in window) {
-      const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
-
-      revealElements.forEach(el => revealObserver.observe(el));
-
-      // Страховочный таймер для мобильных браузеров
-      setTimeout(() => {
-        revealElements.forEach(el => el.classList.add('is-visible'));
-      }, 1400);
-    } else {
-      revealElements.forEach(el => el.classList.add('is-visible'));
-    }
-
-    // =========================================================================
-    // ЖИВОЙ ФОНОВЫЙ CANVAS (НЕЙРОСЕТЬ + ОГНЕННАЯ ТРАЕКТОРИЯ РОСТА)
-    // =========================================================================
     const canvas = document.getElementById('bg-network-canvas');
     const ctx = canvas.getContext('2d');
     let width = 0;
@@ -1156,24 +1063,23 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    function drawNetworkFrame(time = 0) {
+    function drawFrame(time = 0) {
       ctx.clearRect(0, 0, width, height);
 
-      // Фоновая огненно-оранжевая траектория прогресса EF / 1ПМ
       ctx.save();
       ctx.beginPath();
-      const startX = width * 0.52;
-      const baseY = height * 0.74;
+      const startX = width * 0.55;
+      const baseY = height * 0.72;
       const steps = 6;
       for (let s = 0; s <= steps; s++) {
-        const px = startX + (width * 0.45) * (s / steps);
+        const px = startX + (width * 0.42) * (s / steps);
         const wave = Math.sin(time * 0.001 + s * 1.3) * 8;
         const py = baseY - (s * s * 9) + wave;
         if (s === 0) ctx.moveTo(px, py);
         else ctx.lineTo(px, py);
       }
       ctx.strokeStyle = 'rgba(255, 90, 31, 0.18)';
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
       ctx.restore();
 
@@ -1189,11 +1095,11 @@
         const dxm = n.x - mouse.x;
         const dym = n.y - mouse.y;
         const distMouse = Math.hypot(dxm, dym);
-        if (distMouse < 165) {
+        if (distMouse < 160) {
           ctx.beginPath();
           ctx.moveTo(n.x, n.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(255, 90, 31, ${(1 - distMouse / 165) * 0.28})`;
+          ctx.strokeStyle = `rgba(255, 90, 31, ${(1 - distMouse / 160) * 0.28})`;
           ctx.lineWidth = 1;
           ctx.stroke();
         }
@@ -1213,18 +1119,17 @@
 
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = n.isAccent ? 'rgba(255, 90, 31, 0.58)' : 'rgba(148, 163, 184, 0.35)';
+        ctx.fillStyle = n.isAccent ? 'rgba(255, 90, 31, 0.6)' : 'rgba(148, 163, 184, 0.35)';
         ctx.fill();
       }
 
       if (!prefersReducedMotion) {
-        requestAnimationFrame(drawNetworkFrame);
+        requestAnimationFrame(drawFrame);
       }
     }
 
-    drawNetworkFrame();
+    drawFrame();
 
-    // Инициализация
     switchTracker('run');
     calcRunSim();
     calcStrengthSim();
