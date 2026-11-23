@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Спорт / Атлет 360 — Система аналитики тренировок в Excel + PDF | Павел Перов</title>
+  <meta name="description" content="Атлет 360 — авторская система аналитических трекеров в Excel + PDF для бега, воркаута и силовых тренировок. 3–5 цифр в синие ячейки — живые дашборды и расчёт EF, зон Карвонена и 1ПМ без подписок." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              bg: '#0B0F19',
+              card: '#111827',
+              surface: '#161F33',
+              fire: '#FF5A1F',
+              crimson: '#8B0000',
+              cell: '#1D4ED8',
+              cellLight: '#3B82F6',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F8FAFC;
+      background-image:
+        radial-gradient(circle at 15% 10%, rgba(139, 0, 0, 0.22), transparent 38%),
+        radial-gradient(circle at 85% 20%, rgba(255, 90, 31, 0.14), transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .fire-glow {
+      box-shadow: 0 12px 35px -8px rgba(255, 90, 31, 0.35);
+    }
+    .blue-cell-badge {
+      background: rgba(29, 78, 216, 0.25);
+      border: 1px solid rgba(59, 130, 246, 0.55);
+      color: #93C5FD;
+    }
+    .tab-active {
+      background: linear-gradient(135deg, #FF5A1F 0%, #B91C1C 100%);
+      color: #FFFFFF;
+      border-color: rgba(255, 90, 31, 0.8);
+      box-shadow: 0 8px 24px -6px rgba(255, 90, 31, 0.45);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#FF5A1F] selection:text-white">
+
+  <!-- Индикатор прогресса прокрутки -->
+  <div id="scroll-progress" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-[#8B0000] via-[#FF5A1F] to-[#3B82F6] z-50 transition-all duration-150" style="width: 0%"></div>
+
+  <!-- =====================================================================
+       БЛОК 1. ШАПКА НАВИГАЦИИ (HEADER)
+  ====================================================================== -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <a href="index.html" class="flex items-center gap-3 group" title="Вернуться в основное портфолио">
+          <span class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#DC2626] flex items-center justify-center shadow-lg shadow-red-900/40 group-hover:scale-105 transition-transform">
+            <span class="text-white font-black italic tracking-tighter text-base sm:text-lg leading-none">P.P.</span>
+          </span>
+          <div class="leading-tight">
+            <div class="text-sm sm:text-base font-bold text-white group-hover:text-[#FF5A1F] transition-colors">Павел Перов</div>
+            <div class="text-[11px] sm:text-xs text-slate-400">Портфолио · Раздел «Спорт»</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Десктопная навигация -->
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="index.html" class="hover:text-white transition-colors flex items-center gap-1.5 text-slate-400">
+          <span>← Основное портфолио</span>
+        </a>
+        <span class="text-white/15">|</span>
+        <a href="#story" class="hover:text-[#FF5A1F] transition-colors">О проекте</a>
+        <a href="#trackers" class="hover:text-[#FF5A1F] transition-colors">3 трекера</a>
+        <a href="#simulator" class="hover:text-[#FF5A1F] transition-colors">Калькулятор</a>
+        <a href="#workflow" class="hover:text-[#FF5A1F] transition-colors">Как работает</a>
+        <a href="#pricing" class="hover:text-[#FF5A1F] transition-colors">Тарифы</a>
+        <a href="#demo" class="hover:text-[#FF5A1F] transition-colors">Демо</a>
+      </nav>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="#pricing" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white text-xs sm:text-sm font-bold transition-all fire-glow">
+          <span>Тарифы 3 в 1</span>
+        </a>
+        <button id="mobile-menu-btn" type="button" class="lg:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10" aria-label="Меню">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-white/10 bg-[#0B0F19]/95 px-4 py-4 space-y-2 text-sm">
+      <a href="index.html" class="block py-2 px-3 rounded-lg bg-white/5 text-slate-300 font-medium">← Вернуться в основное портфолио</a>
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <a href="#story" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-slate-200">О проекте</a>
+        <a href="#trackers" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-slate-200">3 трекера</a>
+        <a href="#simulator" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-slate-200">Калькулятор</a>
+        <a href="#workflow" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-slate-200">Как работает</a>
+        <a href="#pricing" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-[#FF5A1F] font-semibold">Тарифы</a>
+        <a href="#demo" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-blue-400 font-semibold">Бесплатное ДЕМО</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       БЛОК 2. ПЕРВЫЙ ЭКРАН (HERO SECTION)
+  ====================================================================== -->
+  <section class="relative pt-10 pb-14 sm:pt-16 sm:pb-20 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <!-- Левая колонка -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#8B0000]/30 border border-[#FF5A1F]/40 text-xs sm:text-sm font-semibold text-orange-200">
+            <span class="w-2 h-2 rounded-full bg-[#FF5A1F] animate-pulse"></span>
+            <span>Авторский продукт · Аналитика и визуализация данных</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-[52px] font-black tracking-tight text-white leading-[1.1]">
+            Атлет 360: система аналитики тренировок в <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5A1F] to-amber-400">Excel + PDF</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
+            Бег, воркаут и силовые в одном стандарте. Вносите <span class="inline-block px-2 py-0.5 rounded blue-cell-badge font-mono text-sm font-bold">3–5 цифр</span> после тренировки в синие ячейки — индекс эффективности <strong class="text-white">EF</strong>, пульсовые зоны Карвонена, реальный тоннаж, <strong class="text-white">1ПМ</strong> и живые дашборды пересчитываются автоматически. Без подписок и закрытых сервисов.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+            <a href="#pricing" data-link="boosty" class="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm sm:text-base transition-all fire-glow">
+              <span>Выбрать тариф на Boosty</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+            <a href="#demo" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-semibold text-sm sm:text-base border border-white/15 transition-all">
+              <span>Запросить бесплатное ДЕМО</span>
+            </a>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-xs sm:text-sm text-slate-400">
+            <span class="flex items-center gap-1.5"><span class="text-[#FF5A1F]">●</span> Excel / LibreOffice / WPS</span>
+            <span class="flex items-center gap-1.5"><span class="text-blue-400">●</span> Одностраничные PDF-памятки</span>
+            <span class="flex items-center gap-1.5"><span class="text-emerald-400">●</span> Разовая оплата навсегда</span>
+          </div>
+        </div>
+
+        <!-- Правая колонка: Логотип и баннер -->
+        <div class="lg:col-span-5">
+          <div class="relative rounded-3xl overflow-hidden border border-[#FF5A1F]/30 bg-[#121214] shadow-2xl shadow-black/60 group">
+            <img src="sport/banner-360.jpg" alt="Атлет 360 — Трекеры Excel + PDF" class="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500" onerror="this.src='https://placehold.co/960x540/121214/FF5A1F?text=ATLET+360+EXCEL+%2B+PDF'" />
+            <div class="p-5 sm:p-6 bg-gradient-to-t from-[#0B0F19] via-[#111827] to-[#111827]/95 flex items-center gap-4 border-t border-white/10">
+              <img src="sport/logo-360.jpg" alt="Логотип Атлет 360" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#FF5A1F] shadow-lg shadow-orange-950/60 shrink-0" onerror="this.src='https://placehold.co/200x200/8B0000/FFFFFF?text=360'" />
+              <div>
+                <div class="text-xs font-mono uppercase tracking-wider text-[#FF5A1F] font-bold">Линейка 2026</div>
+                <div class="text-lg sm:text-xl font-extrabold text-white">3 независимых трекера</div>
+                <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Единая логика синих ячеек ввода и автоматических дашбордов за месяц и год.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 карточки-факта -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-10 sm:mt-14">
+        <div class="glass-panel rounded-2xl p-4 sm:p-5 border-l-4 border-l-[#FF5A1F]">
+          <div class="text-2xl sm:text-3xl font-black text-white font-mono">3 + 3</div>
+          <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">3 Excel-трекера и 3 одностраничных PDF-памятки</div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 sm:p-5 border-l-4 border-l-[#3B82F6]">
+          <div class="text-2xl sm:text-3xl font-black text-white font-mono">300–400</div>
+          <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">тренировочных сессий в каждом журнале</div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 sm:p-5 border-l-4 border-l-amber-400">
+          <div class="text-2xl sm:text-3xl font-black text-white font-mono">3–5 цифр</div>
+          <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">ввод после занятия за 30 секунд</div>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 sm:p-5 border-l-4 border-l-emerald-400">
+          <div class="text-2xl sm:text-3xl font-black text-white font-mono">0 ₽/мес</div>
+          <div class="text-xs sm:text-sm text-slate-300 font-medium mt-1">никаких подписок, данные полностью ваши</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 3. ЗАДАЧА И ЛИЧНАЯ ИСТОРИЯ СОЗДАНИЯ
+  ====================================================================== -->
+  <section id="story" class="py-14 sm:py-20 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10 sm:mb-12">
+        <div class="text-xs font-mono uppercase tracking-widest text-[#FF5A1F] font-bold mb-2">Кейс прикладной аналитики и UX</div>
+        <h2 class="text-2xl sm:text-4xl font-black text-white">От хаоса в блокнотах к системе управления формой</h2>
+        <p class="text-slate-300 mt-3 text-sm sm:text-base leading-relaxed">
+          «Атлет 360» родился не в маркетинговом отделе, а из личной практики автора (Павел, 60+, аналитик и дизайнер) — когда понадобилось заменить разрозненные записи спокойным и честным инженерным инструментом.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <!-- Таймлайн -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-panel rounded-2xl p-5 sm:p-6 relative">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="px-2.5 py-1 rounded-lg bg-white/10 text-xs font-mono font-bold text-slate-200">До августа 2024</span>
+              <h3 class="text-base sm:text-lg font-bold text-white">Тяжёлый зал и смена вектора</h3>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Тренировался в тренажёрном зале с классической базой (приседания со штангой до 120 кг, жим лёжа до 100 кг, становая тяга до 130 кг). После длительного перелёта в отпуск на Дальний Восток начали побаливать колени — осознанно отказался от тяжёлого железа и постепенно перешёл на турник, брусья и бег, начиная с обычной ходьбы.
+            </p>
+          </div>
+
+          <div class="glass-panel rounded-2xl p-5 sm:p-6 border-l-4 border-l-[#8B0000]">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="px-2.5 py-1 rounded-lg bg-[#8B0000]/40 text-xs font-mono font-bold text-red-200">Проблема · 700+ записей</span>
+              <h3 class="text-base sm:text-lg font-bold text-white">Сухие цифры не отвечали, растёт ли форма</h3>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Почти два года вёл ручные записи в блокноте и таблицах — накопилось более 700 тренировок на 8 громоздких листах. Календарь и сумма километров или повторений показывали факт работы, но не давали ответа на главный вопрос: растёт ли аэробная и силовая форма или тихо накапливается перегруз.
+            </p>
+          </div>
+
+          <div class="glass-panel rounded-2xl p-5 sm:p-6 border-l-4 border-l-[#FF5A1F]">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="px-2.5 py-1 rounded-lg bg-[#FF5A1F]/20 text-xs font-mono font-bold text-[#FF5A1F]">Решение · Система «Атлет 360»</span>
+              <h3 class="text-base sm:text-lg font-bold text-white">От «записывания» к управлению нагрузкой</h3>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Отобрал проверенные физиологические и биомеханические коэффициенты (индекс эффективности EF, зоны Карвонена, тоннаж с учётом доли веса тела, теоретический 1ПМ по Эпли), убрал всё лишнее и спроектировал наглядные дашборды. За 4 месяца работы по системе вышел на стабильный рост темпа при снижении пульса без переутомления.
+            </p>
+          </div>
+        </div>
+
+        <!-- Правая визуальная карточка -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-panel rounded-3xl p-4 sm:p-5 border border-white/10">
+            <img src="sport/card-overview.png" alt="Умный трекер тренировок: Бег + Турник и брусья PRO" class="w-full h-auto rounded-2xl shadow-lg cursor-zoom-in" onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" onerror="this.src='https://placehold.co/600x750/111827/FF5A1F?text=ATLET+360+OVERVIEW'" />
+            <div class="mt-4 flex items-center justify-between text-xs text-slate-400 px-1">
+              <span>Для взрослых любителей спорта 35–60+ лет</span>
+              <button type="button" onclick="openLightbox('sport/card-overview.png', 'Обзор возможностей системы Атлет 360')" class="text-[#FF5A1F] hover:underline font-semibold">Увеличить ↗</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 4. ИНТЕРАКТИВНЫЙ ОБЗОР ТРЁХ ТРЕКЕРОВ (4 ВКЛАДКИ EXCEL)
+  ====================================================================== -->
+  <section id="trackers" class="py-14 sm:py-20 border-t border-white/10 bg-[#080B12]/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-10">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-widest text-[#FF5A1F] font-bold mb-2">Архитектура и реальные экраны</div>
+          <h2 class="text-2xl sm:text-4xl font-black text-white">Три трекера в едином инженерном стандарте</h2>
+          <p class="text-slate-300 mt-2 text-sm sm:text-base max-w-2xl">
+            Выберите направление, чтобы посмотреть метрики, формулы и скриншоты всех 4 вкладок Excel-книги. Нажмите на любой скриншот для просмотра в полном размере.
+          </p>
+        </div>
+
+        <!-- Вкладки-переключатели -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" role="tablist">
+          <button type="button" onclick="switchTracker('run')" id="tab-run" class="tracker-tab tab-active px-5 py-3 rounded-xl font-bold text-sm border border-white/10 whitespace-nowrap transition-all">
+            1. Бег (Running Pro)
+          </button>
+          <button type="button" onclick="switchTracker('workout')" id="tab-workout" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
+            2. Воркаут (Workout Pro)
+          </button>
+          <button type="button" onclick="switchTracker('strength')" id="tab-strength" class="tracker-tab px-5 py-3 rounded-xl font-bold text-sm bg-white/5 text-slate-300 hover:text-white border border-white/10 whitespace-nowrap transition-all">
+            3. Силовые (Gym Pro)
+          </button>
+        </div>
+      </div>
+
+      <!-- Контейнер динамического контента выбранного трекера -->
+      <div id="tracker-panel" class="glass-panel rounded-3xl p-5 sm:p-8 border border-white/10"></div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       ИНТЕРАКТИВНЫЙ СИМУЛЯТОР ЛОГИКИ ФОРМУЛ (EF, КАРВОНЕН, РИГЕЛЬ, 1ПМ)
+  ====================================================================== -->
+  <section id="simulator" class="py-14 sm:py-20 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-8 sm:mb-10">
+        <div class="text-xs font-mono uppercase tracking-widest text-blue-400 font-bold mb-2">Интерактивная демонстрация логики</div>
+        <h2 class="text-2xl sm:text-4xl font-black text-white">Проверьте, как считают формулы «Атлет 360»</h2>
+        <p class="text-slate-300 mt-2 text-sm sm:text-base">
+          Подвигайте значения в «синих ячейках» ниже — правая панель мгновенно пересчитает физиологические и силовые коэффициенты так же, как это происходит в Excel.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Симулятор 1: Бег -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <span class="text-xs font-mono uppercase text-[#FF5A1F] font-bold">Модуль 1 · Бег</span>
+              <h3 class="text-xl font-extrabold text-white">Индекс EF, зона Карвонена и прогноз Ригеля</h3>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg blue-cell-badge text-xs font-mono font-bold">Синий ввод</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label for="sim-dist" class="block text-xs text-slate-400 mb-1">Дистанция (км)</label>
+              <input id="sim-dist" type="number" step="0.1" min="0.5" max="42.2" value="5.0" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label for="sim-time" class="block text-xs text-slate-400 mb-1">Время пробежки (мин)</label>
+              <input id="sim-time" type="number" step="0.5" min="2" max="300" value="32.5" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label for="sim-hr" class="block text-xs text-slate-400 mb-1">Средний пульс (уд/мин)</label>
+              <input id="sim-hr" type="number" min="80" max="210" value="132" oninput="calcRunSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Возраст / Пульс покоя</label>
+              <div class="grid grid-cols-2 gap-2">
+                <input id="sim-age" type="number" min="18" max="85" value="60" oninput="calcRunSim()" title="Возраст" aria-label="Возраст" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
+                <input id="sim-rest" type="number" min="35" max="100" value="48" oninput="calcRunSim()" title="Пульс покоя" aria-label="Пульс покоя" class="w-full px-2.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold text-center focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-[#0B0F19]/90 p-4 border border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <div class="text-[11px] text-slate-400">Средний темп</div>
+              <div id="out-pace" class="text-lg font-black text-white font-mono mt-0.5">06:30</div>
+              <div class="text-[10px] text-slate-500">мин/км</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Индекс EF</div>
+              <div id="out-ef" class="text-lg font-black text-[#FF5A1F] font-mono mt-0.5">1.17</div>
+              <div class="text-[10px] text-slate-500">м/мин ÷ пульс</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Зона ЧСС</div>
+              <div id="out-zone" class="text-sm font-extrabold text-emerald-400 mt-1">Зона 3 (71%)</div>
+              <div class="text-[10px] text-slate-500">по Карвонену</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Прогноз 10 км</div>
+              <div id="out-10k" class="text-lg font-black text-blue-300 font-mono mt-0.5">1:07:53</div>
+              <div class="text-[10px] text-slate-500">формула Ригеля</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Симулятор 2: Воркаут и Силовые -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <span class="text-xs font-mono uppercase text-amber-400 font-bold">Модули 2 и 3 · Воркаут и Силовые</span>
+              <h3 class="text-xl font-extrabold text-white">Реальный тоннаж и теоретический 1ПМ (Эпли)</h3>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg blue-cell-badge text-xs font-mono font-bold">Синий ввод</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label for="sim-weight" class="block text-xs text-slate-400 mb-1">Рабочий вес (кг)</label>
+              <input id="sim-weight" type="number" step="1" min="5" max="350" value="82" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label for="sim-reps" class="block text-xs text-slate-400 mb-1">Всего повторений</label>
+              <input id="sim-reps" type="number" step="1" min="1" max="500" value="32" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label for="sim-maxrep" class="block text-xs text-slate-400 mb-1">Макс. повторений в подходе</label>
+              <input id="sim-maxrep" type="number" step="1" min="1" max="60" value="10" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+            <div>
+              <label for="sim-dur" class="block text-xs text-slate-400 mb-1">Время тренировки (мин)</label>
+              <input id="sim-dur" type="number" step="1" min="5" max="180" value="25" oninput="calcStrengthSim()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#1D4ED8]/20 border border-[#3B82F6]/60 text-blue-200 font-mono font-bold focus:outline-none focus:border-[#FF5A1F]" />
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-[#0B0F19]/90 p-4 border border-white/10 grid grid-cols-3 gap-3">
+            <div>
+              <div class="text-[11px] text-slate-400">Тоннаж упражнения</div>
+              <div id="out-tonnage" class="text-lg font-black text-blue-300 font-mono mt-0.5">2 624 кг</div>
+              <div class="text-[10px] text-slate-500">вес × повторения</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Плотность нагрузки</div>
+              <div id="out-density" class="text-lg font-black text-white font-mono mt-0.5">105.0</div>
+              <div class="text-[10px] text-slate-500">кг / минуту</div>
+            </div>
+            <div>
+              <div class="text-[11px] text-slate-400">Расчётный 1ПМ</div>
+              <div id="out-1rm" class="text-lg font-black text-[#FF5A1F] font-mono mt-0.5">109.3 кг</div>
+              <div class="text-[10px] text-slate-500">без проходки на 1 раз</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 5. КАК УСТРОЕНА РАБОТА ЗА 3 ШАГА
+  ====================================================================== -->
+  <section id="workflow" class="py-14 sm:py-20 border-t border-white/10 bg-[#080B12]/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-10 sm:mb-12">
+        <div class="text-xs font-mono uppercase tracking-widest text-[#FF5A1F] font-bold mb-2">UX и архитектура таблиц</div>
+        <h2 class="text-2xl sm:text-4xl font-black text-white">Как устроена работа за 3 простых шага</h2>
+        <p class="text-slate-300 mt-2 text-sm sm:text-base">
+          Золотое правило всех трёх книг: <span class="px-2 py-0.5 rounded blue-cell-badge font-mono text-xs font-bold">тёмно-синий текст на голубом фоне</span> — ячейки для вашего ввода; чёрный текст и графики — автоматические формулы.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10 relative">
+          <div class="w-11 h-11 rounded-2xl bg-[#1D4ED8]/30 border border-[#3B82F6]/50 text-blue-300 font-mono font-black text-lg flex items-center justify-center mb-5">01</div>
+          <h3 class="text-xl font-extrabold text-white mb-2">Профиль (1 раз при старте)</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            На вкладке <strong class="text-white">«Старт и Инструкция»</strong> один раз указываете вес, возраст, пульс покоя, лимит пробега для 3 пар кроссовок или названия своих дополнительных упражнений.
+          </p>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10 relative">
+          <div class="w-11 h-11 rounded-2xl bg-[#FF5A1F]/20 border border-[#FF5A1F]/50 text-[#FF5A1F] font-mono font-black text-lg flex items-center justify-center mb-5">02</div>
+          <h3 class="text-xl font-extrabold text-white mb-2">Ввод в синие ячейки (30 сек)</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            После тренировки вносите только <strong class="text-white">3–5 цифр в выделенные синие ячейки</strong> журнала (дистанция, время, пульс или подходы, повторения, вес). Расчётные столбцы защищены от случайного стирания.
+          </p>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10 relative">
+          <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-mono font-black text-lg flex items-center justify-center mb-5">03</div>
+          <h3 class="text-xl font-extrabold text-white mb-2">Живые дашборды + PDF</h3>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Сводки <strong class="text-white">«Дашборд_Месяц»</strong> (с переключателем любого месяца) и <strong class="text-white">«Дашборд_Общий»</strong> перестраиваются мгновенно. В комплекте к каждой таблице — наглядная одностраничная PDF-памятка.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 6. ТАРИФНАЯ СЕТКА И УСЛОВИЯ ДОСТУПА
+  ====================================================================== -->
+  <section id="pricing" class="py-14 sm:py-20 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-8 items-center mb-10 sm:mb-12">
+        <div class="lg:col-span-8">
+          <div class="text-xs font-mono uppercase tracking-widest text-[#FF5A1F] font-bold mb-2">Прозрачные условия</div>
+          <h2 class="text-2xl sm:text-4xl font-black text-white">Тарифы и комплекты «Атлет 360»</h2>
+          <p class="text-slate-300 mt-2 text-sm sm:text-base max-w-2xl">
+            Разовый платёж — файлы скачиваются на ваш компьютер или смартфон и остаются с вами навсегда. Никакой абонентской платы и привязки к сторонним серверам.
+          </p>
+        </div>
+        <div class="lg:col-span-4 flex justify-start lg:justify-end">
+          <div class="flex items-center gap-4 glass-panel p-3 rounded-2xl border border-[#FF5A1F]/30">
+            <img src="sport/bundle-3in1.jpg" alt="Комплект 3 в 1 Атлет 360" class="w-16 h-16 rounded-xl object-cover cursor-zoom-in" onclick="openLightbox('sport/bundle-3in1.jpg', 'Комплект 3 в 1: Бег · Воркаут · Силовые')" onerror="this.src='https://placehold.co/200x200/8B0000/FFFFFF?text=3+в+1'" />
+            <div class="text-xs">
+              <div class="font-bold text-white text-sm">Комплект 3 в 1</div>
+              <div class="text-slate-400">Бег + Воркаут + Силовые</div>
+              <div class="text-[#FF5A1F] font-semibold mt-0.5">Выгода 380 ₽ (16%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6 items-stretch">
+        <!-- Тариф 1 -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">Базовый старт</div>
+            <h3 class="text-xl font-extrabold text-white mt-1">Одна таблица на выбор</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-black text-white font-mono">790 ₽</span>
+              <span class="text-xs text-slate-400">/ навсегда</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2">
+              Если вы фокусируетесь только на одном направлении тренировок.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-300">
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Любой 1 трекер на выбор: <strong>Бег</strong>, <strong>Воркаут</strong> или <strong>Силовые</strong></span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Одностраничная PDF-инструкция быстрого старта</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Защита расчётных формул от случайного удаления</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Работает в Excel, LibreOffice и WPS Office</span></li>
+            </ul>
+          </div>
+          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm border border-white/15 transition-all">
+            Оформить на Boosty →
+          </a>
+        </div>
+
+        <!-- Тариф 2 (Хит) -->
+        <div class="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#1E1418] to-[#111827] border-2 border-[#FF5A1F] shadow-2xl shadow-orange-950/40 flex flex-col justify-between">
+          <div class="absolute -top-3.5 right-6 px-3.5 py-1 rounded-full bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] text-white text-xs font-extrabold uppercase tracking-wider shadow-lg">
+            Хит · Выгода 16%
+          </div>
+          <div>
+            <div class="text-xs font-mono uppercase tracking-wider text-[#FF5A1F] font-bold">Полная система</div>
+            <h3 class="text-xl font-extrabold text-white mt-1">Комплект «Стандарт» (3 в 1)</h3>
+            <div class="mt-4 flex items-baseline gap-2.5">
+              <span class="text-3xl sm:text-4xl font-black text-white font-mono">1 990 ₽</span>
+              <span class="text-sm text-slate-500 line-through font-mono">2 370 ₽</span>
+            </div>
+            <p class="text-xs sm:text-sm text-orange-200/80 mt-2">
+              Экономия 380 ₽ по сравнению с покупкой трёх таблиц по отдельности.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-200">
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span><strong>Все 3 трекера</strong>: Бег + Воркаут + Силовые</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span><strong>3 PDF-инструкции</strong> по всем модулям</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Защищённые от случайного сбоя формулы (безопасный ввод в синие ячейки)</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-[#FF5A1F] font-bold">✓</span><span>Единый стандарт аналитики на 300–400 тренировок в каждом файле</span></li>
+            </ul>
+          </div>
+          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#FF5A1F] to-[#DC2626] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
+            Выбрать «Стандарт» на Boosty →
+          </a>
+        </div>
+
+        <!-- Тариф 3 (PRO) -->
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-blue-500/30 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-mono uppercase tracking-wider text-blue-400 font-bold">Открытый код формул</div>
+            <h3 class="text-xl font-extrabold text-white mt-1">Комплект «PRO» (без паролей)</h3>
+            <div class="mt-4 flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-black text-white font-mono">2 990 ₽</span>
+              <span class="text-xs text-slate-400">/ навсегда</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2">
+              Для тренеров, аналитиков и тех, кто любит настраивать формулы под себя.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-300">
+              <li class="flex items-start gap-2.5"><span class="text-blue-400 font-bold">✓</span><span><strong>Все 3 трекера + 3 PDF-инструкции</strong></span></li>
+              <li class="flex items-start gap-2.5"><span class="text-blue-400 font-bold">✓</span><span><strong>Полностью открытые формулы без паролей</strong> на всех листах</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-blue-400 font-bold">✓</span><span>Свободная адаптация коэффициентов, формул и структуры под свои задачи</span></li>
+              <li class="flex items-start gap-2.5"><span class="text-blue-400 font-bold">✓</span><span>Идеально для глубокой кастомизации</span></li>
+            </ul>
+          </div>
+          <a href="#" data-link="boosty" class="mt-8 w-full inline-flex items-center justify-center px-5 py-3.5 rounded-2xl bg-blue-600/25 hover:bg-blue-600/35 text-blue-200 font-bold text-sm border border-blue-400/40 transition-all">
+            Выбрать «PRO» на Boosty →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 7. ЛИД-МАГНИТ «ПОПРОБУЙТЕ БЕСПЛАТНО ПЕРЕД ПОКУПКОЙ» (ДЕМО)
+  ====================================================================== -->
+  <section id="demo" class="py-14 sm:py-20 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="rounded-3xl p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-[#8B0000]/45 via-[#161F33] to-[#0F172A] border border-[#FF5A1F]/40 relative overflow-hidden">
+        <div class="grid lg:grid-cols-12 gap-8 items-center relative z-10">
+          <div class="lg:col-span-8 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-mono font-bold text-amber-300">
+              Бесплатный тест-драйв перед покупкой
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-black text-white">
+              Попробуйте «Атлет 360» бесплатно по слову «ДЕМО»
+            </h2>
+            <p class="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
+              Напишите кодовое слово <strong class="text-[#FF5A1F]">ДЕМО</strong> в личные сообщения Telegram или Boosty — и я бесплатно отправлю вам 3-строчные пробные файлы всех трёх трекеров (Бег, Воркаут, Силовые), чтобы вы проверили работу формул и дашбордов на своём устройстве. По желанию приложу обезличенный фрагмент моего реального дневника за 4 месяца.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <a href="#" data-link="telegram" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-[#FF5A1F] hover:brightness-110 text-white font-bold text-sm transition-all fire-glow">
+                <span>Написать «ДЕМО» в Telegram</span>
+              </a>
+              <button type="button" onclick="copyDemoWord()" id="copy-demo-btn" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-mono text-sm font-bold border border-white/15 transition-all">
+                <span>Скопировать слово: ДЕМО</span>
+              </button>
+              <a href="#" data-link="youtube" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-red-600/20 hover:bg-red-600/30 text-red-200 font-semibold text-sm border border-red-500/30 transition-all">
+                <span>▶ Видеообзоры (YouTube Shorts)</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4">
+            <div class="glass-panel rounded-2xl p-5 border border-white/15 space-y-3">
+              <div class="text-xs font-mono uppercase text-slate-400">Что входит в бесплатный пакет:</div>
+              <div class="text-sm text-white font-semibold flex items-center gap-2"><span class="text-emerald-400">✔</span> Демо-файл «Бег» (3 строки + дашборды)</div>
+              <div class="text-sm text-white font-semibold flex items-center gap-2"><span class="text-emerald-400">✔</span> Демо-файл «Воркаут» (3 строки + дашборды)</div>
+              <div class="text-sm text-white font-semibold flex items-center gap-2"><span class="text-emerald-400">✔</span> Демо-файл «Силовые» (10 упр. + 1ПМ)</div>
+              <div class="text-xs text-slate-400 pt-2 border-t border-white/10">
+                * Витрина Boosty и канал с видеообзорами готовятся к запуску — ссылки обновятся в один клик.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       БЛОК 8. ФУТЕР И СВЯЗЬ С ОСНОВНЫМ ПОРТФОЛИО
+  ====================================================================== -->
+  <footer class="py-10 sm:py-12 border-t border-white/10 bg-[#070A10]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3.5">
+        <span class="w-10 h-10 rounded-full bg-[#DC2626] flex items-center justify-center">
+          <span class="text-white font-black italic tracking-tighter text-base">P.P.</span>
+        </span>
+        <div>
+          <div class="text-sm font-bold text-white">Павел Перов · PaPer</div>
+          <div class="text-xs text-slate-400">Аналитик данных, мультимедиа-дизайнер и автор системы «Атлет 360»</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-5 text-xs sm:text-sm text-slate-400">
+        <a href="index.html" class="text-white hover:text-[#FF5A1F] font-semibold transition-colors">← На главную портфолио</a>
+        <a href="#" data-link="boosty" class="hover:text-white transition-colors">Boosty</a>
+        <a href="#" data-link="telegram" class="hover:text-white transition-colors">Telegram</a>
+        <a href="#" data-link="youtube" class="hover:text-white transition-colors">YouTube Shorts</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно полноэкранного просмотра скриншотов (Lightbox) -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения" class="fixed inset-0 z-50 hidden bg-black/92 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <button type="button" onclick="closeLightbox()" class="absolute top-4 right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl font-bold" aria-label="Закрыть">×</button>
+    <button type="button" id="lb-prev" onclick="stepLightbox(-1)" class="hidden sm:flex absolute left-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold" aria-label="Предыдущий слайд">‹</button>
+    <button type="button" id="lb-next" onclick="stepLightbox(1)" class="hidden sm:flex absolute right-4 z-50 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-xl font-bold" aria-label="Следующий слайд">›</button>
+
+    <div class="max-w-6xl w-full flex flex-col items-center">
+      <img id="lb-img" src="" alt="" class="max-h-[80dvh] w-auto rounded-2xl border border-white/15 shadow-2xl object-contain" />
+      <div id="lb-caption" class="mt-3 text-center text-xs sm:text-sm text-slate-200 font-medium px-4"></div>
+    </div>
+  </div>
+
+  <!-- Всплывающее уведомление (Toast) для заглушек ссылок и копирования -->
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-50 hidden max-w-sm glass-panel border border-[#FF5A1F]/50 rounded-2xl p-4 shadow-2xl text-sm text-white"></div>
+
+  <script>
+    // =========================================================================
+    // ЕДИНЫЙ БЛОК НАСТРОЙКИ ССЫЛОК (Вставьте свои URL когда будут готовы)
+    // =========================================================================
+    const ATHLETE360_LINKS = {
+      boosty: "#",     // Например: "https://boosty.to/ваш_профиль"
+      telegram: "#",   // Например: "https://t.me/ваш_ник"
+      youtube: "#"     // Например: "https://youtube.com/@ваш_канал/shorts"
+    };
+
+    // Привязка ссылок к кнопкам
+    document.querySelectorAll('[data-link]').forEach(el => {
+      const key = el.getAttribute('data-link');
+      const url = ATHLETE360_LINKS[key];
+      if (url && url !== "#") {
+        el.setAttribute('href', url);
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener noreferrer');
+      } else {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const names = { boosty: 'Boosty', telegram: 'Telegram', youtube: 'YouTube Shorts' };
+          showToast(`Ссылка на ${names[key] || 'ресурс'} скоро появится — витрина «Атлет 360» в финальной сборке!`);
+        });
+      }
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 4200);
+    }
+
+    function copyTextToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        // Игнорируем ошибку, если буфер недоступен
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+
+    function copyDemoWord() {
+      copyTextToClipboard('ДЕМО');
+      const btn = document.getElementById('copy-demo-btn');
+      btn.textContent = '✓ Скопировано: ДЕМО';
+      showToast('Кодовое слово «ДЕМО» скопировано в буфер обмена!');
+      setTimeout(() => { btn.innerHTML = '<span>Скопировать слово: ДЕМО</span>'; }, 3000);
+    }
+
+    // =========================================================================
+    // ДАННЫЕ ПО ТРЁМ ТРЕКЕРАМ (Все 4 вкладки + постеры)
+    // =========================================================================
+    const TRACKERS_DATA = {
+      run: {
+        badge: "Модуль 1 · Running Analytics Pro · 400 пробежек",
+        title: "Трекер «Бег»: контроль пульса, темпа и индекса EF",
+        subtitle: "Показывает реальный рост аэробной выносливости, даже если вы бегаете в спокойном оздоровительном темпе.",
+        poster: "sport/poster-run.jpg",
+        featureCard: "sport/card-run.png",
+        features: [
+          "Индекс эффективности EF (скорость м/мин ÷ средний пульс) + 7-дневный и 28-дневный тренды выносливости",
+          "Индивидуальные 5 пульсовых зон по методу Карвонена с учётом вашего утреннего пульса покоя и максимума по Танака",
+          "Ручной ввод фактических минут по зонам со спортивных часов (Huawei, Garmin, Amazfit, Apple Watch) + сравнение двух круговых диаграмм",
+          "Автопрогноз времени на 3 км, 5 км, 10 км и полумарафон по формуле Ригеля и шкала износа для 3 пар кроссовок"
+        ],
+        screens: [
+          { src: "sport/run-start.png", title: "1. Старт и Инструкция — профиль атлета, зоны ЧСС Карвонена и парк кроссовок" },
+          { src: "sport/run-diary.png", title: "2. Дневник_Бег — журнал на 400 пробежек: синие ячейки ввода, EF и минуты с часов" },
+          { src: "sport/run-dash-month.png", title: "3. Дашборд_Месяц — разбор выбранного месяца по неделям, темпу, EF и зонам ЧСС" },
+          { src: "sport/run-dash-total.png", title: "4. Дашборд_Общий — сводка за весь период, тренд EF, прогноз Ригеля и ресурс обуви" }
+        ]
+      },
+      workout: {
+        badge: "Модуль 2 · Workout Analytics Pro · 300 тренировок",
+        title: "Трекер «Воркаут»: турник, брусья и биомеханический тоннаж",
+        subtitle: "Превращает тренировки со своим весом и утяжелителями в точную силовую аналитику с защитой плечевых суставов.",
+        poster: "sport/poster-workout.jpg",
+        featureCard: "sport/card-workout.png",
+        features: [
+          "Расчёт реального тоннажа с учётом коэффициента массы тела (турник 95%, брусья 92%, отжимания 65%) и дополнительного груза (рюкзак/пояс)",
+          "3 базовых упражнения + 3 настраиваемых слота под ваши движения (приседания, пресс, уличные тренажёры)",
+          "Контроль баланса «Тяга / Жим» (целевой коридор 0,65–0,85 защищает плечи и осанку от перекоса)",
+          "Плотность тренировки (кг/мин), средний вес за подход и расчётный максимум 1ПМ по Эпли для турника и брусьев"
+        ],
+        screens: [
+          { src: "sport/workout-start.png", title: "1. Старт и Инструкция — вес атлета, коэффициенты и настройка 3 своих упражнений" },
+          { src: "sport/workout-diary.png", title: "2. Дневник_Воркаут — журнал на 300 сессий: подходы, повторения, доп. вес и 1ПМ" },
+          { src: "sport/workout-dash-month.png", title: "3. Дашборд_Месяц — разбор месяца, акценты тренировок и вклад каждого упражнения" },
+          { src: "sport/workout-dash-total.png", title: "4. Дашборд_Общий — суммарный тоннаж в тоннах, баланс Тяга/Жим и динамика 1ПМ" }
+        ]
+      },
+      strength: {
+        badge: "Модуль 3 · Athletic & Gym Pro · 300 тренировок",
+        title: "Трекер «Силовые»: база троеборья, 10 упражнений и 1ПМ",
+        subtitle: "Силовой журнал для зала и свободных весов: отслеживает рост чистой силы без травмоопасных проходок на 1 раз.",
+        poster: "sport/poster-strength.jpg",
+        featureCard: "sport/bundle-3in1.jpg",
+        features: [
+          "3 базовых упражнения (Жим лёжа, Приседания со штангой, Становая тяга) + 7 настраиваемых позиций (Упражнения 4–10)",
+          "Автоматический расчёт теоретического одноповторного максимума (1ПМ) по формуле Эпли и суммы троеборья",
+          "Рейтинг всех 10 упражнений: доля каждого движения в общем тоннаже, максимальный рабочий вес и среднее число повторений",
+          "Плотность нагрузки (кг/мин) и распределение сессий по акцентам (Жим, Присед, Тяга, Верх/Низ, Фулбоди)"
+        ],
+        screens: [
+          { src: "sport/strength-start.png", title: "1. Старт и Инструкция — параметры атлета и настройка 7 пользовательских упражнений" },
+          { src: "sport/strength-diary.png", title: "2. Дневник_Силовые — журнал на 300 тренировок: синие ячейки ввода и авторасчёт 1ПМ" },
+          { src: "sport/strength-dash-month.png", title: "3. Дашборд_Месяц — сумма троеборья 1ПМ, разбивка по 5 неделям и 10 упражнениям" },
+          { src: "sport/strength-dash-total.png", title: "4. Дашборд_Общий — динамика 1ПМ Жим/Присед/Становая и структура тоннажа" }
+        ]
+      }
+    };
+
+    let currentLightboxList = [];
+    let currentLightboxIdx = 0;
+
+    function switchTracker(key) {
+      document.querySelectorAll('.tracker-tab').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('bg-white/5', 'text-slate-300');
+      });
+      const activeBtn = document.getElementById('tab-' + key);
+      activeBtn.classList.add('tab-active');
+      activeBtn.classList.remove('bg-white/5', 'text-slate-300');
+
+      const data = TRACKERS_DATA[key];
+      currentLightboxList = data.screens;
+
+      const panel = document.getElementById('tracker-panel');
+      panel.innerHTML = `
+        <div class="grid lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4">
+            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19]">
+              <img src="${data.poster}" alt="${data.title}" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.poster}', '${data.title}')" onerror="this.src='https://placehold.co/540x960/121214/FF5A1F?text=ATLET+360'" />
+            </div>
+            <div class="rounded-2xl overflow-hidden border border-white/10 bg-[#0B0F19]">
+              <img src="${data.featureCard}" alt="Карточка модуля" class="w-full h-auto object-cover cursor-zoom-in hover:scale-[1.02] transition-transform" onclick="openSingleLightbox('${data.featureCard}', '${data.title}')" onerror="this.src='https://placehold.co/600x750/111827/FF5A1F?text=MODULE+CARD'" />
+            </div>
+          </div>
+
+          <div class="lg:col-span-8 space-y-6">
+            <div>
+              <div class="inline-block px-3 py-1 rounded-full bg-[#FF5A1F]/15 border border-[#FF5A1F]/35 text-xs font-mono font-bold text-[#FF5A1F] mb-2">
+                ${data.badge}
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-black text-white">${data.title}</h3>
+              <p class="text-sm sm:text-base text-slate-300 mt-2 leading-relaxed">${data.subtitle}</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-3">
+              ${data.features.map(f => `
+                <div class="rounded-2xl bg-[#0B0F19]/80 border border-white/10 p-4 text-xs sm:text-sm text-slate-200 flex items-start gap-2.5">
+                  <span class="text-[#FF5A1F] font-bold mt-0.5">●</span>
+                  <span>${f}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">4 вкладки книги Excel (нажмите для увеличения):</span>
+                <span class="text-xs text-[#FF5A1F]">Листайте свайпом или стрелками</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                ${data.screens.map((s, idx) => `
+                  <div onclick="openGalleryLightbox(${idx})" class="group cursor-zoom-in rounded-2xl overflow-hidden border border-white/10 hover:border-[#FF5A1F]/60 bg-[#0B0F19] transition-all">
+                    <div class="aspect-[16/10] overflow-hidden bg-slate-900">
+                      <img src="${s.src}" alt="${s.title}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/800x500/0F172A/3B82F6?text=Excel+Dashboard'" />
+                    </div>
+                    <div class="p-3 text-xs font-medium text-slate-300 group-hover:text-white flex items-center justify-between gap-2">
+                      <span>${s.title}</span>
+                      <span class="text-[#FF5A1F] shrink-0">🔍</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      applyTypography(panel);
+    }
+
+    // Функции полноэкранного просмотра (Lightbox)
+    function openGalleryLightbox(idx) {
+      currentLightboxIdx = idx;
+      const item = currentLightboxList[idx];
+      document.getElementById('lb-img').src = item.src;
+      document.getElementById('lb-caption').textContent = `${item.title} (${idx + 1} из ${currentLightboxList.length})`;
+      document.getElementById('lb-prev').style.display = 'flex';
+      document.getElementById('lb-next').style.display = 'flex';
+      document.getElementById('lightbox').classList.remove('hidden');
+    }
+
+    function openSingleLightbox(src, title) {
+      currentLightboxList = [{ src, title }];
+      currentLightboxIdx = 0;
+      document.getElementById('lb-img').src = src;
+      document.getElementById('lb-caption').textContent = title;
+      document.getElementById('lb-prev').style.display = 'none';
+      document.getElementById('lb-next').style.display = 'none';
+      document.getElementById('lightbox').classList.remove('hidden');
+    }
+
+    function openLightbox(src, title) {
+      openSingleLightbox(src, title);
+    }
+
+    function stepLightbox(dir) {
+      if (currentLightboxList.length <= 1) return;
+      currentLightboxIdx = (currentLightboxIdx + dir + currentLightboxList.length) % currentLightboxList.length;
+      const item = currentLightboxList[currentLightboxIdx];
+      document.getElementById('lb-img').src = item.src;
+      document.getElementById('lb-caption').textContent = `${item.title} (${currentLightboxIdx + 1} из ${currentLightboxList.length})`;
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('lightbox').classList.contains('hidden')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') stepLightbox(1);
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+    });
+
+    // Поддержка свайпов на мобильных устройствах в лайтбоксе
+    let touchStartX = 0;
+    const lb = document.getElementById('lightbox');
+    lb.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    lb.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 45) stepLightbox(diff < 0 ? 1 : -1);
+    }, { passive: true });
+
+    // =========================================================================
+    // ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР ФОРМУЛ (EF, Карвонен, Ригель, Эпли 1ПМ)
+    // =========================================================================
+    function formatSeconds(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = Math.round(sec % 60);
+      if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function calcRunSim() {
+      const dist = parseFloat(document.getElementById('sim-dist').value) || 5;
+      const timeMin = parseFloat(document.getElementById('sim-time').value) || 30;
+      const hr = parseFloat(document.getElementById('sim-hr').value) || 130;
+      const age = parseFloat(document.getElementById('sim-age').value) || 60;
+      const rest = parseFloat(document.getElementById('sim-rest').value) || 48;
+
+      const paceSec = (timeMin * 60) / dist;
+      const speedMPerMin = (dist * 1000) / timeMin;
+      const ef = speedMPerMin / hr;
+
+      const maxHr = 208 - 0.7 * age;
+      const hrrPct = Math.max(0, Math.min(100, Math.round(((hr - rest) / (maxHr - rest)) * 100)));
+      let zoneLabel = 'Зона 1';
+      if (hrrPct >= 90) zoneLabel = 'Зона 5';
+      else if (hrrPct >= 80) zoneLabel = 'Зона 4';
+      else if (hrrPct >= 70) zoneLabel = 'Зона 3';
+      else if (hrrPct >= 60) zoneLabel = 'Зона 2';
+
+      const t10kSec = (timeMin * 60) * Math.pow(10 / dist, 1.06);
+
+      document.getElementById('out-pace').textContent = formatSeconds(paceSec);
+      document.getElementById('out-ef').textContent = ef.toFixed(2);
+      document.getElementById('out-zone').textContent = `${zoneLabel} (${hrrPct}%)`;
+      document.getElementById('out-10k').textContent = formatSeconds(t10kSec);
+    }
+
+    function calcStrengthSim() {
+      const weight = parseFloat(document.getElementById('sim-weight').value) || 80;
+      const reps = parseFloat(document.getElementById('sim-reps').value) || 30;
+      const maxRep = parseFloat(document.getElementById('sim-maxrep').value) || 10;
+      const dur = parseFloat(document.getElementById('sim-dur').value) || 25;
+
+      const tonnage = Math.round(weight * reps);
+      const density = tonnage / dur;
+      const oneRm = weight * (1 + maxRep / 30);
+
+      document.getElementById('out-tonnage').textContent = tonnage.toLocaleString('ru-RU') + ' кг';
+      document.getElementById('out-density').textContent = density.toFixed(1);
+      document.getElementById('out-1rm').textContent = oneRm.toFixed(1) + ' кг';
+    }
+
+    // =========================================================================
+    // ТИПОГРАФИКА БЕЗ ВИСЯЧИХ ПРЕДЛОГОВ И СОЮЗОВ
+    // =========================================================================
+    function applyTypography(root = document.body) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const tag = node.parentElement && node.parentElement.tagName;
+          if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'INPUT' || tag === 'TEXTAREA') {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const prepRegex = /(^|[\s(«„])(в|во|без|до|из|изо|к|ко|на|над|о|об|обо|от|ото|по|под|подо|при|про|с|со|у|через|и|а|но|да|или|ни|не|же|ли|бы|как|что|для|за)(?=\s+)/gi;
+      let node;
+      while ((node = walker.nextNode())) {
+        const orig = node.nodeValue;
+        const fixed = orig
+          .replace(prepRegex, '$1$2\u00A0')
+          .replace(/\s+(—|–)/g, '\u00A0$1');
+        if (fixed !== orig) node.nodeValue = fixed;
+      }
+    }
+
+    // Мобильное меню и прогресс прокрутки
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(a => {
+      a.addEventListener('click', () => document.getElementById('mobile-menu').classList.add('hidden'));
+    });
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      document.getElementById('scroll-progress').style.width = pct + '%';
+    }, { passive: true });
+
+    // Инициализация
+    switchTracker('run');
+    calcRunSim();
+    calcStrengthSim();
+    applyTypography(document.body);
+  </script>
+</body>
+</html>
